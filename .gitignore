@@ -1,0 +1,13 @@
+# AOI-Vision
+# 自动光学检测系统
+# 龙仕显微镜摄像头 + HaaS506-HD3 + OpenCV
+
+__pycache__/
+*.pyc
+*.pyo
+.env
+uploads/
+*.db
+node_modules/
+dist/
+.DS_Store
