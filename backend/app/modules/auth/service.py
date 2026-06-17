@@ -211,13 +211,14 @@ async def seed_default_rbac(db: AsyncSession):
     ]
     perm_objs = {}
     for name, desc, perms in perms_data:
-        existing = await db.execute(select(Permission).where(Permission.name == name))
-        if not existing.scalar_one_or_none():
+        result = await db.execute(select(Permission).where(Permission.name == name))
+        existing = result.scalar_one_or_none()
+        if not existing:
             p = Permission(name=name, description=desc, permissions=perms)
             db.add(p); await db.flush()
             perm_objs[name] = p
         else:
-            perm_objs[name] = existing.scalar_one()
+            perm_objs[name] = existing
 
     # 账号组
     groups_data = [
