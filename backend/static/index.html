@@ -72,18 +72,16 @@ input[type=range]{width:100%}
 <div class="content" id="content"><div class="msg">Loading...</div></div>
 
 <script>
-const API='';let token='',user=null;
-
-// ====== AUTH ======
-function auth(){return token?{'Authorization':'Bearer '+token}:{}}
+const API='';window.token='';let user=null;
+// ====== AUTH=*** auth(){return window.token?{'Authorization':'Bearer '+window.token}:{}}
 async function login(){
   const u=document.getElementById('in-user').value,p=document.getElementById('in-pass').value;
   try{
     const r=await fetch(API+'/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
     const d=await r.json();
-    if(d.access_token){token=d.access_token;user=d.user;document.getElementById('login-msg').textContent='✅ '+u;updateStatus();renderNav();}
-    else document.getElementById('login-msg').textContent='❌ '+JSON.stringify(d.detail||d);
-  }catch(e){document.getElementById('login-msg').textContent='❌ 连接失败';}
+    if(d.access_token){window.token=d.access_token;user=d.user;document.getElementById('login-msg').textContent='✅ '+u;updateStatus();renderNav();switchTab(currentTab);}
+    else document.getElementById('login-msg').textContent='❌ '+(d.detail||JSON.stringify(d));
+  }catch(e){document.getElementById('login-msg').textContent='❌ 连接失败: '+e.message;}
 }
 async function updateStatus(){
   try{const r=await fetch(API+'/health');const d=await r.json();document.getElementById('s-backend').innerHTML='<span class="dot dg"></span>v'+d.version}catch(e){}
