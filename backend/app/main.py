@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from app.core.database import init_db
 from app.modules.auth import router as auth_router
-from app.modules.admin import router as admin_router, seed_default_options
+from app.modules.admin import router as admin_router
 from app.modules.defects import router as defects_router
 from app.modules.measurement import router as measurement_router
 from app.modules.reports import router as reports_router

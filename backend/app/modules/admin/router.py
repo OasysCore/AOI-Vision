@@ -4,7 +4,7 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
-from app.modules.auth.service import get_current_user, require_admin
+from app.modules.auth.service import get_current_user, require_permission
 from app.modules.admin.schemas import FieldOptionCreate, FieldOptionUpdate, FieldOptionResponse, AuditLogListResponse
 from app.modules.admin.service import list_options, create_option, update_option, delete_option, query_audit_logs
 
@@ -15,11 +15,11 @@ async def get_options(field_name: str | None = Query(None), db: AsyncSession = D
     return await list_options(db, field_name)
 
 @router.post("/field-options", response_model=FieldOptionResponse)
-async def add_option(data: FieldOptionCreate, db: AsyncSession = Depends(get_db), _admin=Depends(require_admin)):
+async def add_option(data: FieldOptionCreate, db: AsyncSession = Depends(get_db), _admin=require_permission("admin", "manage")):
     return await create_option(db, data)
 
 @router.put("/field-options/{opt_id}", response_model=FieldOptionResponse)
-async def edit_option(opt_id: int, data: FieldOptionUpdate, db: AsyncSession = Depends(get_db), _admin=Depends(require_admin)):
+async def edit_option(opt_id: int, data: FieldOptionUpdate, db: AsyncSession = Depends(get_db), _admin=require_permission("admin", "manage")):
     opt = await update_option(db, opt_id, data)
     if not opt:
         from app.core.exceptions import AppException
@@ -27,7 +27,7 @@ async def edit_option(opt_id: int, data: FieldOptionUpdate, db: AsyncSession = D
     return opt
 
 @router.delete("/field-options/{opt_id}", status_code=204)
-async def remove_option(opt_id: int, db: AsyncSession = Depends(get_db), _admin=Depends(require_admin)):
+async def remove_option(opt_id: int, db: AsyncSession = Depends(get_db), _admin=require_permission("admin", "manage")):
     ok = await delete_option(db, opt_id)
     if not ok:
         from app.core.exceptions import AppException

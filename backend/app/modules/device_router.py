@@ -21,7 +21,8 @@ async def device_telemetry(_user=Depends(get_current_user)):
 
 @router.post("/relay")
 async def set_relay(relay: int = 1, state: bool = False, _user=Depends(get_current_user)):
-    from app.modules.auth.service import require_admin
+    from app.modules.auth.service import require_permission
+    _admin = require_permission("device", "manage")
     gw = create_device_gateway(settings.DEVICE_GATEWAY_TYPE)
     await gw.connect()
     try:

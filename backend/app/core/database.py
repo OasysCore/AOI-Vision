@@ -8,11 +8,8 @@ from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.types import TypeDecorator, CHAR
 from app.core.config import settings
 
-# ====== SQLite UUID 兼容 ======
 class GUID(TypeDecorator):
-    """Cross-platform UUID"""
-    impl = CHAR
-    cache_ok = True
+    impl = CHAR; cache_ok = True
     def load_dialect_impl(self, dialect):
         return dialect.type_descriptor(CHAR(36)) if dialect.name == "sqlite" else dialect.type_descriptor(self.impl)
     def process_bind_param(self, value, dialect):
@@ -35,11 +32,7 @@ if "sqlite" in settings.DATABASE_URL:
     def _sqlite_fk(dbapi_connection, connection_record):
         dbapi_connection.execute("PRAGMA foreign_keys=ON")
 
-class Base(DeclarativeBase):
-    pass
-
-# Export GUID for other modules to use
-__all__ = ["Base", "engine", "async_session", "get_db", "init_db", "GUID"]
+class Base(DeclarativeBase): pass
 
 async def get_db():
     async with async_session() as session:
@@ -51,11 +44,14 @@ async def get_db():
             raise
 
 async def init_db():
+    """创建表 + 种子数据"""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    
+    from app.modules.admin.service import seed_default_options
+    from app.modules.auth.service import seed_all
+    
     async with async_session() as db:
-        from app.modules.admin.service import seed_default_options
         await seed_default_options(db)
-        from app.modules.auth.service import seed_admin_user
-        await seed_admin_user(db)
+        await seed_all(db)
         await db.commit()
