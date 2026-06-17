@@ -4,7 +4,10 @@
 """
 from contextlib import asynccontextmanager
 import sys, os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "aoi_engine")))
+# Add project root to sys.path so aoi_engine can be imported
+_project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# __file__ = backend/app/main.py → backend/app → backend → project root
+sys.path.insert(0, os.path.dirname(_project_root))  # parent of backend/ = AOI-Vision/
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
