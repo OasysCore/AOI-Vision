@@ -310,8 +310,9 @@ Expected: `docker compose ps` shows postgres healthy
 
 ## 实施原则
 
+- **硬件抽象层**：`app/hardware/` — 工厂模式懒加载，换硬件只改 `.env` 中 `CAMERA_TYPE` / `DEVICE_GATEWAY_TYPE`
 - **bite-sized tasks** 每任务 2-5 分钟
 - **TDD** 先测试后实现
 - **Frequent commits** 每任务完成后提交
-- **Two-stage review** 每个子任务 spec review → code review
-- **先用 mock 再换真实硬件** 初期用本地摄像头/JPG 文件模拟
+- **Two-stage review** spec review → code review
+- **先用 mock 再换真实硬件** 初期用 MockCamera/MockDevice, 上线切 UVC/HaaS506
