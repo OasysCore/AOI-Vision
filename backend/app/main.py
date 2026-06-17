@@ -3,6 +3,8 @@
 描述: FastAPI 应用入口，路由注册
 """
 from contextlib import asynccontextmanager
+import sys, os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "aoi_engine")))
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles

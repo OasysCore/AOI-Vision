@@ -1,7 +1,12 @@
-"""AOI-Vision v0.1 — OpenCV 缺陷检测引擎
+"""AOI-Vision v0.2 — 缺陷检测引擎 (Core Engine wrapper)
 日期: 2026-06-17 | 作者: William Chao / OASYS CORE
-描述: 模板比对 / 轮廓分析 / 颜色阈值 三种检测模式
+描述: 代理到独立 aoi_engine 包。生产环境替换为 Cython .so
 """
+try:
+    from aoi_engine.defect import DefectEngine, InspectionResult, Defect
+except ImportError:
+    # Fallback: embedded engine
+    from ._engine_fallback import DefectEngine, InspectionResult, Defect
 import io
 from typing import Any
 

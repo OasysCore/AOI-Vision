@@ -260,13 +260,67 @@ async function loadLogs(){
 }
 
 // ====== TAB: 系统管理 ======
+window._adminTab='users';
 window.render_admin=async function(){
-  let h='<div class="panel"><h3>⚙ 参数枚举管理</h3><div class="flex"><input class="inp" id="fo-field" placeholder="字段名"><input class="inp" id="fo-value" placeholder="值"><input class="inp" id="fo-label" placeholder="标签"><button class="btn bpri" onclick="addFieldOption()">+ 添加</button></div><table class="mt8"><thead><tr><th>字段</th><th>值</th><th>标签</th><th>排序</th><th>操作</th></tr></thead><tbody id="fo-tbody"></tbody></table></div>';
-  h+='<div class="panel"><h3>👤 用户管理</h3><table><thead><tr><th>用户名</th><th>全名</th><th>管理员</th><th>状态</th></tr></thead><tbody id="um-tbody"></tbody></table></div>';
-  document.getElementById('content').innerHTML=h;
-  try{const r=await fetch(API+'/admin/field-options',{headers:auth()});const os=await r.json();document.getElementById('fo-tbody').innerHTML=os.map(o=>`<tr><td>${o.field_name}</td><td>${o.option_value}</td><td>${o.option_label}</td><td>${o.sort_order}</td><td><button class="btn bdan" onclick="delFO(${o.id})">删除</button></td></tr>`).join('')||'<tr><td colspan="5" class="msg">暂无数据</td></tr>'}catch(e){}
-  try{const r=await fetch(API+'/auth/users',{headers:auth()});const us=await r.json();document.getElementById('um-tbody').innerHTML=us.map(u=>`<tr><td>${u.username}</td><td>${u.full_name||'-'}</td><td>${u.is_admin?'<span class="badge bwarn">是</span>':'<span class="badge binfo">否</span>'}</td><td>${u.is_active?'<span class="badge bpass">启用</span>':'<span class="badge bfail">停用</span>'}</td></tr>`).join('')||'<tr><td colspan="4" class="msg">暂无数据</td></tr>'}catch(e){}
+  let h=`<div class="flex" style="margin-bottom:12px"><button class="btn ${window._adminTab==='users'?'bpri':'bsec'}" onclick="window._adminTab='users';render_admin()">👤 用户</button><button class="btn ${window._adminTab==='groups'?'bpri':'bsec'}" onclick="window._adminTab='groups';render_admin()">👥 账号组</button><button class="btn ${window._adminTab==='perms'?'bpri':'bsec'}" onclick="window._adminTab='perms';render_admin()">🔑 权限组</button><button class="btn ${window._adminTab==='options'?'bpri':'bsec'}" onclick="window._adminTab='options';render_admin()">📝 参数枚举</button></div>`;
+  document.getElementById('content').innerHTML=h+'<div id="admin-body"></div>';
+  if(window._adminTab==='users') await renderAdminUsers();
+  else if(window._adminTab==='groups') await renderAdminGroups();
+  else if(window._adminTab==='perms') await renderAdminPerms();
+  else await renderAdminOptions();
 };
+
+async function renderAdminUsers(){
+  let h=`<div class="panel"><h3>👤 用户管理</h3><div class="flex"><input class="inp" id="au-name" placeholder="用户名"><input class="inp" id="au-pass" type="password" placeholder="密码"><input class="inp" id="au-full" placeholder="全名(可选)"><select class="inp" id="au-groups" multiple style="min-height:60px"></select><button class="btn bpri" onclick="createUser()">+ 创建用户</button></div>`;
+  h+='<table class="mt8"><thead><tr><th>用户名</th><th>全名</th><th>所属组</th><th>管理员</th><th>状态</th><th>操作</th></tr></thead><tbody id="au-tbody"></tbody></table></div>';
+  document.getElementById('admin-body').innerHTML=h;
+  try{
+    const[gr,ur]=await Promise.all([fetch(API+'/auth/account-groups',{headers:auth()}),fetch(API+'/auth/users',{headers:auth()})]);
+    const[groups,users]=await Promise.all([gr.json(),ur.json()]);
+    document.getElementById('au-groups').innerHTML=groups.map(g=>`<option value="${g.id}">${g.name}</option>`).join('');
+    document.getElementById('au-tbody').innerHTML=users.map(u=>`<tr><td>${u.username}</td><td>${u.full_name||'-'}</td><td>${(u.account_groups||[]).map(g=>g.name).join(', ')||'-'}</td><td>${u.is_admin?'<span class="badge bwarn">是</span>':'<span class="badge binfo">否</span>'}</td><td>${u.is_active?'<span class="badge bpass">启用</span>':'<span class="badge bfail">停用</span>'}</td><td><button class="btn bdan" onclick="delUser('${u.id}')">禁用</button></td></tr>`).join('')||'<tr><td colspan="6" class="msg">暂无</td></tr>';
+  }catch(e){}
+}
+async function createUser(){
+  const n=document.getElementById('au-name').value,p=document.getElementById('au-pass').value,f=document.getElementById('au-full').value;
+  const gs=[...document.getElementById('au-groups').selectedOptions].map(o=>o.value);
+  if(!n||!p)return alert('用户名和密码必填');
+  await fetch(API+'/auth/users',{method:'POST',headers:{...auth(),'Content-Type':'application/json'},body:JSON.stringify({username:n,password:p,full_name:f,account_group_ids:gs})});
+  render_admin();
+}
+async function delUser(id){if(confirm('禁用此用户?')){await fetch(API+'/auth/users/'+id,{method:'DELETE',headers:auth()});render_admin();}}
+
+async function renderAdminGroups(){
+  let h=`<div class="panel"><h3>👥 账号组管理</h3><div class="flex"><input class="inp" id="ag-name" placeholder="组名称"><input class="inp" id="ag-desc" placeholder="描述"><select class="inp" id="ag-perms" multiple style="min-height:60px"></select><button class="btn bpri" onclick="createGroup()">+ 创建组</button></div>`;
+  h+='<table class="mt8"><thead><tr><th>名称</th><th>描述</th><th>关联权限</th><th>状态</th><th>操作</th></tr></thead><tbody id="ag-tbody"></tbody></table></div>';
+  document.getElementById('admin-body').innerHTML=h;
+  try{
+    const[pr,gr]=await Promise.all([fetch(API+'/auth/permissions',{headers:auth()}),fetch(API+'/auth/account-groups',{headers:auth()})]);
+    const[perms,groups]=await Promise.all([pr.json(),gr.json()]);
+    document.getElementById('ag-perms').innerHTML=perms.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+    document.getElementById('ag-tbody').innerHTML=groups.map(g=>`<tr><td>${g.name}</td><td>${g.description||'-'}</td><td>${(g.permissions||[]).map(p=>p.name).join(', ')}</td><td>${g.is_active?'<span class="badge bpass">启用</span>':'<span class="badge bfail">停用</span>'}</td><td><button class="btn bdan" onclick="delGroup('${g.id}')">删除</button></td></tr>`).join('')||'<tr><td colspan="5" class="msg">暂无</td></tr>';
+  }catch(e){}
+}
+async function createGroup(){
+  const n=document.getElementById('ag-name').value,d=document.getElementById('ag-desc').value;
+  const ps=[...document.getElementById('ag-perms').selectedOptions].map(o=>o.value);
+  if(!n)return alert('名称必填');
+  await fetch(API+'/auth/account-groups',{method:'POST',headers:{...auth(),'Content-Type':'application/json'},body:JSON.stringify({name:n,description:d,permission_ids:ps})});
+  render_admin();
+}
+async function delGroup(id){if(confirm('删除此组?')){await fetch(API+'/auth/account-groups/'+id,{method:'DELETE',headers:auth()});render_admin();}}
+
+async function renderAdminPerms(){
+  let h='<div class="panel"><h3>🔑 权限组</h3><table><thead><tr><th>名称</th><th>描述</th><th>权限详情</th><th>状态</th></tr></thead><tbody id="ap-tbody"></tbody></table></div>';
+  document.getElementById('admin-body').innerHTML=h;
+  try{const r=await fetch(API+'/auth/permissions',{headers:auth()});const ps=await r.json();document.getElementById('ap-tbody').innerHTML=ps.map(p=>`<tr><td>${p.name}</td><td>${p.description||'-'}</td><td>${Object.entries(p.permissions||{}).map(([k,v])=>`<span class="badge ${v==='manage'?'bwarn':'binfo'}">${k}:${v}</span>`).join(' ')}</td><td>${p.is_active?'<span class="badge bpass">启用</span>':'<span class="badge bfail">停用</span>'}</td></tr>`).join('')||'<tr><td colspan="4" class="msg">暂无</td></tr>'}catch(e){}
+}
+
+async function renderAdminOptions(){
+  let h='<div class="panel"><h3>📝 参数枚举管理</h3><div class="flex"><input class="inp" id="fo-field" placeholder="字段名"><input class="inp" id="fo-value" placeholder="值"><input class="inp" id="fo-label" placeholder="标签"><button class="btn bpri" onclick="addFieldOption()">+ 添加</button></div><table class="mt8"><thead><tr><th>字段</th><th>值</th><th>标签</th><th>排序</th><th>操作</th></tr></thead><tbody id="fo-tbody"></tbody></table></div>';
+  document.getElementById('admin-body').innerHTML=h;
+  try{const r=await fetch(API+'/admin/field-options',{headers:auth()});const os=await r.json();document.getElementById('fo-tbody').innerHTML=os.map(o=>`<tr><td>${o.field_name}</td><td>${o.option_value}</td><td>${o.option_label}</td><td>${o.sort_order}</td><td><button class="btn bdan" onclick="delFO(${o.id})">删除</button></td></tr>`).join('')||'<tr><td colspan="5" class="msg">暂无</td></tr>'}catch(e){}
+}
 async function addFieldOption(){
   const fn=document.getElementById('fo-field').value,v=document.getElementById('fo-value').value,l=document.getElementById('fo-label').value;
   if(!fn||!v||!l)return alert('请填写完整');
