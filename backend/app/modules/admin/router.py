@@ -33,6 +33,28 @@ async def remove_option(opt_id: int, db: AsyncSession = Depends(get_db), _admin=
         from app.core.exceptions import AppException
         raise AppException(404, "Option not found")
 
+# ====== 模块管理 ======
+
+@router.get("/engine-modules")
+async def get_modules(_user=Depends(get_current_user)):
+    """查看所有 OpenCV 模块及启用状态"""
+    from aoi_engine import registry
+    return registry.get_config()
+
+@router.post("/engine-modules/{module_key}")
+async def toggle_module(module_key: str, data: dict, _admin=require_permission("admin", "manage")):
+    """启用/禁用指定模块"""
+    from aoi_engine import registry
+    enabled = data.get("enabled", True)
+    ok = registry.toggle(module_key, enabled)
+    return {"key": module_key, "enabled": registry.get(module_key).enabled if registry.get(module_key) else None, "success": ok}
+
+@router.get("/engine-modules/config")
+async def export_module_config(_user=Depends(get_current_user)):
+    """导出当前模块配置快照（用于客户打包）"""
+    from aoi_engine import registry
+    return registry.get_config()
+
 @router.get("/audit-logs", response_model=AuditLogListResponse)
 async def get_audit_logs(entity_type: str | None = Query(None), action: str | None = Query(None),
                           username: str | None = Query(None), limit: int = Query(50, ge=1, le=200),

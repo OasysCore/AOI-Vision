@@ -262,11 +262,12 @@ async function loadLogs(){
 // ====== TAB: 系统管理 ======
 window._adminTab='users';
 window.render_admin=async function(){
-  let h=`<div class="flex" style="margin-bottom:12px"><button class="btn ${window._adminTab==='users'?'bpri':'bsec'}" onclick="window._adminTab='users';render_admin()">👤 用户</button><button class="btn ${window._adminTab==='groups'?'bpri':'bsec'}" onclick="window._adminTab='groups';render_admin()">👥 账号组</button><button class="btn ${window._adminTab==='perms'?'bpri':'bsec'}" onclick="window._adminTab='perms';render_admin()">🔑 权限组</button><button class="btn ${window._adminTab==='options'?'bpri':'bsec'}" onclick="window._adminTab='options';render_admin()">📝 参数枚举</button></div>`;
+  let h=`<div class="flex" style="margin-bottom:12px"><button class="btn ${window._adminTab==='users'?'bpri':'bsec'}" onclick="window._adminTab='users';render_admin()">👤 用户</button><button class="btn ${window._adminTab==='groups'?'bpri':'bsec'}" onclick="window._adminTab='groups';render_admin()">👥 账号组</button><button class="btn ${window._adminTab==='perms'?'bpri':'bsec'}" onclick="window._adminTab='perms';render_admin()">🔑 权限组</button><button class="btn ${window._adminTab==='options'?'bpri':'bsec'}" onclick="window._adminTab='options';render_admin()">📝 参数枚举</button><button class="btn ${window._adminTab==='modules'?'bpri':'bsec'}" onclick="window._adminTab='modules';render_admin()">🧩 功能模块</button></div>`;
   document.getElementById('content').innerHTML=h+'<div id="admin-body"></div>';
   if(window._adminTab==='users') await renderAdminUsers();
   else if(window._adminTab==='groups') await renderAdminGroups();
   else if(window._adminTab==='perms') await renderAdminPerms();
+  else if(window._adminTab==='modules') await renderAdminModules();
   else await renderAdminOptions();
 };
 
@@ -314,6 +315,33 @@ async function renderAdminPerms(){
   let h='<div class="panel"><h3>🔑 权限组</h3><table><thead><tr><th>名称</th><th>描述</th><th>权限详情</th><th>状态</th></tr></thead><tbody id="ap-tbody"></tbody></table></div>';
   document.getElementById('admin-body').innerHTML=h;
   try{const r=await fetch(API+'/auth/permissions',{headers:auth()});const ps=await r.json();document.getElementById('ap-tbody').innerHTML=ps.map(p=>`<tr><td>${p.name}</td><td>${p.description||'-'}</td><td>${Object.entries(p.permissions||{}).map(([k,v])=>`<span class="badge ${v==='manage'?'bwarn':'binfo'}">${k}:${v}</span>`).join(' ')}</td><td>${p.is_active?'<span class="badge bpass">启用</span>':'<span class="badge bfail">停用</span>'}</td></tr>`).join('')||'<tr><td colspan="4" class="msg">暂无</td></tr>'}catch(e){}
+}
+
+async function renderAdminModules(){
+  let h='<div class="panel"><h3>🧩 OpenCV 功能模块管理</h3><p style="font-size:12px;color:var(--muted);margin-bottom:12px">按客户需求选择启用/禁用检测模块。依赖模块自动级联检查。配置可直接导出给客户打包。</p>';
+  h+='<div id="mod-list"></div></div>';
+  document.getElementById('admin-body').innerHTML=h;
+  try{
+    const r=await fetch(API+'/admin/engine-modules',{headers:auth()});const d=await r.json();
+    const cats=['detection','measurement','vision'];
+    const names={detection:'🔍 检测类',measurement:'📐 量测类',vision:'👁 视觉增强'};
+    let body='';
+    cats.forEach(cat=>{
+      const mods=d.details.filter(m=>m.category===cat);
+      if(!mods.length)return;
+      body+=`<h4 style="margin-top:12px;color:var(--accent)">${names[cat]} (${mods.length})</h4><table><thead><tr><th>模块</th><th>层级</th><th>状态</th><th>操作</th></tr></thead><tbody>`;
+      mods.forEach(m=>{
+        const lvl={basic:'基础',advanced:'进阶',enterprise:'企业'}[m.level]||m.level;
+        body+=`<tr><td><b>${m.name}</b><br><span style="font-size:10px;color:var(--muted)">${m.key}</span></td><td><span class="badge ${m.level==='basic'?'bpass':m.level==='advanced'?'binfo':'bwarn'}">${lvl}</span></td><td>${m.enabled?'<span class="badge bpass">● 启用</span>':'<span class="badge bfail">○ 禁用</span>'}</td><td><button class="btn ${m.enabled?'bdan':'bsuc'}" onclick="toggleModule('${m.key}',${!m.enabled})">${m.enabled?'禁用':'启用'}</button></td></tr>`;
+      });
+      body+='</tbody></table>';
+    });
+    document.getElementById('mod-list').innerHTML=body;
+  }catch(e){document.getElementById('mod-list').innerHTML='<div class="err">加载失败</div>';}
+}
+async function toggleModule(key,enabled){
+  await fetch(API+'/admin/engine-modules/'+key,{method:'POST',headers:{...auth(),'Content-Type':'application/json'},body:JSON.stringify({enabled})});
+  render_admin();
 }
 
 async function renderAdminOptions(){
