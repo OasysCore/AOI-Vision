@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AOI-Vision 自动光学检测系统</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f1923;--card:#1a2a3a;--accent:#00b4d8;--green:#00c853;--red:#ff1744;--gold:#ffc107;--text:#e0e0e0;--muted:#78909c}
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.header{background:var(--card);border-bottom:2px solid var(--accent);padding:12px 24px;display:flex;align-items:center;gap:16px}
+.header h1{font-size:20px;color:var(--accent)}
+.header .status{display:flex;gap:12px;margin-left:auto;font-size:13px}
+.header .status span{padding:4px 12px;border-radius:20px;background:rgba(255,255,255,0.05)}
+.status .ok{color:var(--green)} .status .warn{color:var(--gold)}
+.nav{background:var(--card);display:flex;gap:2px;padding:0 24px;overflow-x:auto}
+.nav button{background:none;border:none;color:var(--muted);padding:12px 20px;cursor:pointer;font-size:14px;border-bottom:2px solid transparent;transition:.2s;white-space:nowrap}
+.nav button:hover,.nav button.active{color:var(--accent);border-bottom-color:var(--accent)}
+.content{padding:20px 24px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+.card{background:var(--card);border-radius:8px;padding:20px;text-align:center}
+.card .value{font-size:32px;font-weight:bold;color:var(--accent)}
+.card .label{font-size:12px;color:var(--muted);margin-top:4px}
+.panel{background:var(--card);border-radius:8px;padding:20px;margin-bottom:16px}
+.panel h3{font-size:16px;margin-bottom:12px;color:var(--accent)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:8px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.05)}
+th{color:var(--muted);font-weight:500}
+tr:hover{background:rgba(255,255,255,0.03)}
+.badge{padding:2px 8px;border-radius:10px;font-size:11px}
+.badge-pass{background:rgba(0,200,83,0.2);color:var(--green)}
+.badge-fail{background:rgba(255,23,68,0.2);color:var(--red)}
+.badge-info{background:rgba(0,180,216,0.2);color:var(--accent)}
+.flex{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+input,select,button{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--text);padding:8px 14px;border-radius:6px;font-size:13px}
+button{background:var(--accent);border-color:var(--accent);cursor:pointer;font-weight:500}
+button:hover{opacity:.9}
+button.danger{background:var(--red);border-color:var(--red)}
+.stream{border-radius:8px;background:#000;max-width:100%;height:auto}
+.loading{text-align:center;padding:40px;color:var(--muted)} .error{color:var(--red);padding:20px}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>🔬 AOI-Vision</h1>
+  <span style="font-size:12px;color:var(--muted)">自动光学检测系统 v0.1</span>
+  <div class="status">
+    <span id="backend-status" class="warn">后端检测中...</span>
+    <span id="device-status" class="warn">设备: --</span>
+    <span>👤 <span id="username">未登录</span></span>
+  </div>
+</div>
+
+<div class="nav">
+  <button class="active" onclick="showTab('dashboard')">📊 仪表盘</button>
+  <button onclick="showTab('video')">📷 实时画面</button>
+  <button onclick="showTab('defects')">🔍 缺陷检测</button>
+  <button onclick="showTab('measure')">📐 量测校准</button>
+  <button onclick="showTab('reports')">📈 SPC报表</button>
+  <button onclick="showTab('device')">📡 设备监控</button>
+  <button onclick="showTab('admin')">⚙ 管理</button>
+</div>
+
+<div class="content" id="content"></div>
+
+<script>
+// ====== 状态 ======
+const API = '';
+let token = '';
+let user = null;
+
+// ====== 标签页 ======
+function showTab(name) {
+  document.querySelectorAll('.nav button').forEach((b,i,a)=>{
+    b.classList.toggle('active', b.textContent.includes({'dashboard':'仪表盘','video':'实时画面','defects':'缺陷','measure':'量测','reports':'SPC','device':'设备','admin':'管理'}[name]))
+  });
+  const r = {'dashboard':renderDashboard,'video':renderVideo,'defects':renderDefects,'measure':renderMeasure,'reports':renderReports,'device':renderDevice,'admin':renderAdmin};
+  (r[name]||renderDashboard)();
+}
+
+// ====== 仪表盘 ======
+async function renderDashboard() {
+  let html = '<div class="cards">';
+  try {
+    const r = await fetch(API+'/reports/spc?days=30',{headers:auth()});
+    const d = await r.json();
+    html += `<div class="card"><div class="value">${d.samples||0}</div><div class="label">检测样本数</div></div>`;
+    html += `<div class="card"><div class="value">${d.pass_rate||0}%</div><div class="label">良品率</div></div>`;
+    html += `<div class="card"><div class="value">${d.cpk||0}</div><div class="label">CPK</div></div>`;
+    html += `<div class="card"><div class="value">${d.mean_defect_rate||0}</div><div class="label">平均缺陷数</div></div>`;
+  } catch(e) { html += '<div class="card"><div class="value">--</div><div class="label">等待连接后端</div></div>'; }
+  html += '</div>';
+
+  try {
+    const r2 = await fetch(API+'/defects/results?limit=10',{headers:auth()});
+    const d2 = await r2.json();
+    html += '<div class="panel"><h3>最近检测记录</h3><table><tr><th>时间</th><th>规则</th><th>缺陷数</th><th>结果</th><th>置信度</th></tr>';
+    (d2.items||[]).forEach(i=>{
+      html += `<tr><td>${(i.created_at||'').slice(0,19)}</td><td>${i.rule_id||'-'}</td><td>${i.defect_count||0}</td><td><span class="badge ${i.pass_fail?'badge-pass':'badge-fail'}">${i.pass_fail?'PASS':'FAIL'}</span></td><td>${(i.confidence||0)*100}%</td></tr>`;
+    });
+    html += '</table></div>';
+  } catch(e) {}
+
+  try {
+    const r3 = await fetch(API+'/admin/audit-logs?limit=10',{headers:auth()});
+    const d3 = await r3.json();
+    html += '<div class="panel"><h3>操作日志</h3><table><tr><th>时间</th><th>用户</th><th>操作</th><th>摘要</th></tr>';
+    (d3.items||[]).forEach(l=>{
+      html += `<tr><td>${(l.timestamp||'').slice(0,19)}</td><td>${l.username}</td><td>${l.action}</td><td>${l.summary||'-'}</td></tr>`;
+    });
+    html += '</table></div>';
+  } catch(e) {}
+  document.getElementById('content').innerHTML = html;
+}
+
+// ====== 实时画面 ======
+async function renderVideo() {
+  let html = '<div class="panel"><h3>📷 相机实时画面</h3>';
+  html += '<div class="flex">';
+  html += '<select id="cam-type"><option value="mock">模拟相机</option><option value="uvc">USB相机</option></select>';
+  html += '<button onclick="startCamera()">开启相机</button>';
+  html += '<button onclick="stopCamera()" class="danger">关闭</button>';
+  html += '</div>';
+  html += '<div style="margin-top:16px"><img id="cam-stream" class="stream" style="width:100%;max-width:800px" src="" alt="相机画面"></div>';
+  html += '<div id="cam-info" style="margin-top:8px;color:var(--muted)">点击「开启相机」开始</div>';
+  html += '</div>';
+  document.getElementById('content').innerHTML = html;
+
+  // 尝试 WebSocket 连接
+  if (window.ws) window.ws.close();
+  try {
+    window.ws = new WebSocket('ws://127.0.0.1:8000/ws/camera');
+    window.ws.onmessage = e => {
+      const img = document.getElementById('cam-stream');
+      if (img) img.src = 'data:image/jpeg;base64,' + e.data;
+    };
+    window.ws.onopen = () => { document.getElementById('cam-info').innerHTML = '✅ WebSocket 已连接'; };
+    window.ws.onerror = () => { document.getElementById('cam-info').innerHTML = '⚠️ WebSocket 未连接（后端未启动或未配置）'; };
+  } catch(e) { document.getElementById('cam-info').innerHTML = '⚠️ WebSocket 连接失败'; }
+}
+
+function startCamera() {
+  if (window.ws && window.ws.readyState === WebSocket.OPEN) return;
+  renderVideo();
+}
+function stopCamera() {
+  if (window.ws) window.ws.close();
+  document.getElementById('cam-info').innerHTML = '已关闭';
+}
+
+// ====== 缺陷检测 ======
+async function renderDefects() {
+  let html = '<div class="panel"><h3>🔍 检测规则</h3>';
+  html += '<div class="flex" style="margin-bottom:12px">';
+  html += '<input id="rule-name" placeholder="规则名称">';
+  html += '<select id="rule-type"><option value="template_match">模板比对</option><option value="contour">轮廓分析</option><option value="color_threshold">颜色阈值</option></select>';
+  html += '<input id="rule-threshold" placeholder="阈值(0-1)" value="0.95" style="width:100px">';
+  html += '<button onclick="createRule()">+ 创建规则</button>';
+  html += '</div>';
+
+  try {
+    const r = await fetch(API+'/defects/rules',{headers:auth()});
+    const rules = await r.json();
+    html += '<table><tr><th>名称</th><th>类型</th><th>阈值</th><th>操作</th></tr>';
+    rules.forEach(ru=>{
+      html += `<tr><td>${ru.name}</td><td><span class="badge badge-info">${ru.type}</span></td><td>${ru.threshold}</td>
+        <td><button onclick="runInspection('${ru.id}')">执行检测</button>
+        <button onclick="deleteRule('${ru.id}')" class="danger">删除</button></td></tr>`;
+    });
+    html += '</table>';
+  } catch(e) { html += '<div class="error">⚠️ 未连接后端或数据库未启动 — 启动 PostgreSQL 后刷新</div>'; }
+  html += '</div>';
+
+  html += '<div class="panel"><h3>检测结果（最近 10 条）</h3><div id="inspect-results"><span class="loading">点击「执行检测」后显示</span></div></div>';
+  document.getElementById('content').innerHTML = html;
+}
+
+async function createRule() {
+  const name = document.getElementById('rule-name').value;
+  const type = document.getElementById('rule-type').value;
+  const threshold = parseFloat(document.getElementById('rule-threshold').value);
+  if (!name) return alert('请输入规则名称');
+  await fetch(API+'/defects/rules',{method:'POST',headers:{...auth(),'Content-Type':'application/json'},body:JSON.stringify({name,type,threshold,params:{},is_active:true})});
+  renderDefects();
+}
+
+async function runInspection(ruleId) {
+  const r = await fetch(API+'/defects/inspect',{method:'POST',headers:{...auth(),'Content-Type':'application/json'},body:JSON.stringify({rule_id:ruleId,capture:false})});
+  const d = await r.json();
+  const el = document.getElementById('inspect-results');
+  el.innerHTML = `<table><tr><th>缺陷数</th><th>结果</th><th>置信度</th><th>详情</th></tr>
+    <tr><td>${d.defect_count}</td><td><span class="badge ${d.pass_fail?'badge-pass':'badge-fail'}">${d.pass_fail?'PASS':'FAIL'}</span></td><td>${(d.confidence||0)*100}%</td><td>${(d.defects||[]).map(x=>x.description).join(', ')||'无缺陷'}</td></tr></table>`;
+}
+
+async function deleteRule(id) { await fetch(API+'/defects/rules/'+id,{method:'DELETE',headers:auth()}); renderDefects(); }
+
+// ====== 量测校准 ======
+async function renderMeasure() {
+  let html = '<div class="panel"><h3>📐 尺寸标定</h3>';
+  html += '<div class="flex"><input id="cal-name" placeholder="标定名称"><input id="cal-pixel" placeholder="像素距离" style="width:100px"><input id="cal-real" placeholder="实际距离(mm)" style="width:100px"><button onclick="doCalibrate()">计算标定</button></div>';
+  html += '<div id="cal-result" style="margin-top:8px;color:var(--accent)"></div>';
+  html += '</div>';
+
+  try {
+    const r = await fetch(API+'/measurement/calibrations',{headers:auth()});
+    const cals = await r.json();
+    html += '<div class="panel"><h3>已保存标定</h3><table><tr><th>名称</th><th>pixels/mm</th><th>时间</th></tr>';
+    cals.forEach(c=>{ html += `<tr><td>${c.name}</td><td>${c.pixels_per_mm}</td><td>${c.created_at?.slice(0,19)}</td></tr>`; });
+    html += '</table></div>';
+  } catch(e) {}
+
+  try {
+    const r2 = await fetch(API+'/measurement/records',{headers:auth()});
+    const recs = await r2.json();
+    html += '<div class="panel"><h3>量测记录</h3><table><tr><th>图片</th><th>标定</th><th>标注数</th><th>时间</th></tr>';
+    recs.forEach(rec=>{ html += `<tr><td>${rec.image_path||'-'}</td><td>${rec.calibration_id||'-'}</td><td>${(rec.annotations||[]).length}</td><td>${rec.created_at?.slice(0,19)}</td></tr>`; });
+    html += '</table></div>';
+  } catch(e) {}
+  document.getElementById('content').innerHTML = html;
+}
+
+async function doCalibrate() {
+  const name = document.getElementById('cal-name').value||'default';
+  const pixel = parseFloat(document.getElementById('cal-pixel').value);
+  const real = parseFloat(document.getElementById('cal-real').value);
+  const r = await fetch(API+'/measurement/calibrate',{method:'POST',headers:{...auth(),'Content-Type':'application/json'},body:JSON.stringify({pixel_distance:pixel,real_mm:real})});
+  const d = await r.json();
+  document.getElementById('cal-result').innerHTML = `✅ pixels/mm = ${d.pixels_per_mm}`;
+  renderMeasure();
+}
+
+// ====== SPC报表 ======
+async function renderReports() {
+  let html = '<div class="panel"><h3>📈 SPC 统计过程控制</h3>';
+  try {
+    const r = await fetch(API+'/reports/spc?days=30',{headers:auth()});
+    const d = await r.json();
+    html += `<div class="cards" style="margin-bottom:16px">
+      <div class="card"><div class="value">${d.cpk}</div><div class="label">CPK</div></div>
+      <div class="card"><div class="value">${d.ppk}</div><div class="label">PPK</div></div>
+      <div class="card"><div class="value">${d.sigma}</div><div class="label">Sigma (σ)</div></div>
+      <div class="card"><div class="value">${d.pass_rate}%</div><div class="label">良品率</div></div>
+    </div>`;
+    html += '<h4 style="margin:12px 0">趋势数据（最近30天）</h4><table><tr><th>日期</th><th>缺陷数</th><th>判定</th></tr>';
+    (d.trend||[]).slice(-20).forEach(t=>{
+      html += `<tr><td>${(t.date||'').slice(0,10)}</td><td>${t.defect_count}</td><td><span class="badge ${t.pass?'badge-pass':'badge-fail'}">${t.pass?'PASS':'FAIL'}</span></td></tr>`;
+    });
+    html += '</table>';
+    html += '<button style="margin-top:12px" onclick="downloadPdf()">📄 下载 PDF 报告</button>';
+  } catch(e) { html += '<div class="error">后端未连接</div>'; }
+  html += '</div>';
+  document.getElementById('content').innerHTML = html;
+}
+
+function downloadPdf() { window.open(API+'/reports/pdf', '_blank'); }
+
+// ====== 设备监控 ======
+async function renderDevice() {
+  let html = '<div class="panel"><h3>📡 设备遥测</h3>';
+  try {
+    const r = await fetch(API+'/device/telemetry',{headers:auth()});
+    const d = await r.json();
+    html += `<div class="cards">
+      <div class="card"><div class="value" style="color:${d.online?'var(--green)':'var(--red)'}">${d.online?'🟢 在线':'🔴 离线'}</div><div class="label">设备状态</div></div>
+      <div class="card"><div class="value">${d.signal_strength}/31</div><div class="label">4G 信号 (CSQ)</div></div>
+      <div class="card"><div class="value">${d.temperature}°C</div><div class="label">设备温度</div></div>
+      <div class="card"><div class="value">${Math.floor(d.uptime_seconds/3600)}h</div><div class="label">运行时长</div></div>
+    </div>`;
+    html += '<div class="flex" style="margin-top:16px">';
+    html += `<button onclick="toggleRelay(1)" style="background:${d.relay1_state?'var(--green)':'var(--red)'}">继电器1: ${d.relay1_state?'ON':'OFF'}</button>`;
+    html += `<button onclick="toggleRelay(2)" style="background:${d.relay2_state?'var(--green)':'var(--red)'}">继电器2: ${d.relay2_state?'ON':'OFF'}</button>`;
+    html += '</div>';
+    html += `<div style="margin-top:8px;color:var(--muted)">GPS: ${d.gps_lat.toFixed(4)}, ${d.gps_lng.toFixed(4)}</div>`;
+  } catch(e) { html += '<div class="error">设备未连接（当前用 Mock 模式）</div>'; }
+  html += '</div>';
+  document.getElementById('content').innerHTML = html;
+}
+
+async function toggleRelay(n) {
+  await fetch(API+'/device/relay?relay='+n+'&state=true',{method:'POST',headers:auth()});
+  setTimeout(()=>fetch(API+'/device/relay?relay='+n+'&state=false',{method:'POST',headers:auth()}),1000);
+  setTimeout(renderDevice, 500);
+}
+
+// ====== 管理 ======
+async function renderAdmin() {
+  let html = '<div class="panel"><h3>⚙ 参数枚举</h3>';
+  try {
+    const r = await fetch(API+'/admin/field-options',{headers:auth()});
+    const opts = await r.json();
+    html += '<table><tr><th>字段</th><th>值</th><th>标签</th><th>排序</th></tr>';
+    opts.forEach(o=>{ html += `<tr><td>${o.field_name}</td><td>${o.option_value}</td><td>${o.option_label}</td><td>${o.sort_order}</td></tr>`; });
+    html += '</table>';
+  } catch(e) { html += '<div class="error">需登录 Admin 账号</div>'; }
+  html += '</div><div class="panel"><h3>🔐 登录</h3>';
+  html += '<div class="flex"><input id="login-user" placeholder="用户名"><input id="login-pass" type="password" placeholder="密码"><button onclick="doLogin()">登录</button><button onclick="doRegister()">注册</button></div>';
+  html += '<div id="login-msg" style="margin-top:8px"></div>';
+  html += '</div>';
+  document.getElementById('content').innerHTML = html;
+}
+
+// ====== 认证 ======
+function auth() { return token ? {'Authorization':'Bearer '+token} : {}; }
+async function doLogin() {
+  const u = document.getElementById('login-user').value, p = document.getElementById('login-pass').value;
+  const r = await fetch(API+'/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
+  const d = await r.json();
+  if (d.access_token) { token = d.access_token; user = d.user; updateHeader(); document.getElementById('login-msg').innerHTML='✅ 登录成功'; renderDashboard(); }
+  else document.getElementById('login-msg').innerHTML='❌ '+JSON.stringify(d);
+}
+async function doRegister() {
+  const u = document.getElementById('login-user').value, p = document.getElementById('login-pass').value;
+  const r = await fetch(API+'/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
+  const d = await r.json();
+  if (d.access_token) { token = d.access_token; user = d.user; updateHeader(); document.getElementById('login-msg').innerHTML='✅ 注册成功'; }
+  else document.getElementById('login-msg').innerHTML='❌ '+JSON.stringify(d);
+}
+
+function updateHeader() {
+  document.getElementById('username').textContent = user ? user.username : '未登录';
+  document.getElementById('backend-status').className = 'ok';
+  document.getElementById('backend-status').textContent = '🟢 后端已连接';
+}
+
+// ====== 启动 ======
+fetch(API+'/health').then(r=>r.json()).then(d=>{
+  document.getElementById('backend-status').className='ok';
+  document.getElementById('backend-status').textContent='🟢 后端 v'+d.version;
+}).catch(()=>{});
+
+renderDashboard();
+</script>
+</body>
+</html>

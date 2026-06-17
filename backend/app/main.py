@@ -4,6 +4,7 @@
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from app.modules.auth import router as auth_router
 from app.modules.admin import router as admin_router, seed_default_options
 from app.modules.defects import router as defects_router
@@ -22,6 +23,16 @@ app.include_router(reports_router)
 app.include_router(device_router)
 app.include_router(ws_router)
 
+import os
+static_path = os.path.join(os.path.dirname(__file__), "../static")
+if os.path.exists(static_path):
+    app.mount("/app", StaticFiles(directory=static_path, html=True), name="static")
+
 @app.get("/health")
 async def health():
     return {"status": "ok", "version": "0.1.0"}
+
+@app.get("/")
+async def root():
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/app/")
