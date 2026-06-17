@@ -22,7 +22,8 @@ async def login(data: UserLogin, db: AsyncSession = Depends(get_db)):
 
 @router.get("/me", response_model=UserResponse)
 async def me(user=Depends(get_current_user)):
-    return user
+    return {"id": str(user.id), "username": user.username, "full_name": user.full_name or "",
+            "is_admin": user.is_admin, "group_id": str(user.group_id) if user.group_id else None, "is_active": user.is_active}
 
 @router.get("/groups", response_model=list[GroupResponse])
 async def get_groups(db: AsyncSession = Depends(get_db), _admin=Depends(require_admin)):

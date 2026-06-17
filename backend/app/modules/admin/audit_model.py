@@ -4,10 +4,15 @@
 """
 import uuid
 from datetime import datetime, timezone
-from sqlalchemy import DateTime, Integer, String, Text, func
-from sqlalchemy.dialects.postgresql import JSONB, UUID
+from sqlalchemy import DateTime, String, Text, func
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.sqlite import JSON as SQLiteJSON
 from sqlalchemy.orm import Mapped, mapped_column
+from app.core.config import settings
 from app.core.database import Base
+
+# SQLite 用 JSON，PostgreSQL 用 JSONB
+JSONType = SQLiteJSON if "sqlite" in settings.DATABASE_URL else __import__("sqlalchemy.dialects.postgresql", fromlist=["JSONB"]).JSONB
 
 class AuditLog(Base):
     __tablename__ = "audit_logs"
@@ -18,5 +23,5 @@ class AuditLog(Base):
     entity_type: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
     entity_id: Mapped[str | None] = mapped_column(String(100), nullable=True)
     entity_label: Mapped[str | None] = mapped_column(String(200), nullable=True)
-    changes: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    changes: Mapped[dict | None] = mapped_column(JSONType, nullable=True)
     summary: Mapped[str | None] = mapped_column(Text, nullable=True)

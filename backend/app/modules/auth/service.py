@@ -52,7 +52,17 @@ async def login_user(db: AsyncSession, data: UserLogin) -> dict:
     if not user.is_active:
         raise HTTPException(status_code=403, detail="Account disabled")
     token = create_access_token({"sub": str(user.id), "is_admin": user.is_admin})
-    return {"access_token": token, "user": user}
+    return {
+        "access_token": token,
+        "user": {
+            "id": str(user.id),
+            "username": user.username,
+            "full_name": user.full_name or "",
+            "is_admin": user.is_admin,
+            "group_id": str(user.group_id) if user.group_id else None,
+            "is_active": user.is_active
+        }
+    }
 
 async def create_group(db: AsyncSession, data: GroupCreate) -> UserGroup:
     existing = await db.execute(select(UserGroup).where(UserGroup.name == data.name))
@@ -70,3 +80,13 @@ async def list_groups(db: AsyncSession) -> list[UserGroup]:
 async def list_users(db: AsyncSession) -> list[User]:
     result = await db.execute(select(User).order_by(User.username))
     return list(result.scalars().all())
+
+
+async def seed_admin_user(db: AsyncSession):
+    """初始化 Admin 账号 (admin/admin123)"""
+    from app.core.security import hash_password
+    existing = await db.execute(select(User).where(User.username == "admin"))
+    if not existing.scalar_one_or_none():
+        admin = User(username="admin", hashed_password=hash_password("admin123"), full_name="Administrator", is_admin=True)
+        db.add(admin)
+        await db.flush()

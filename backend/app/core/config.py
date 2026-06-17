@@ -4,7 +4,7 @@
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/aoi_vision"
+    DATABASE_URL: str = "sqlite+aiosqlite:///./aoi_vision.db"
     JWT_SECRET_KEY: str = "change-me-in-production"
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     UPLOAD_DIR: str = "./uploads"
