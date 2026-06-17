@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     UPLOAD_DIR: str = "./uploads"
     CAMERA_INDEX: int = 0
+    CAMERA_TYPE: str = "mock"       # mock | uvc | gige | hikvision | ...
+    DEVICE_GATEWAY_TYPE: str = "mock"  # mock | haas506 | modbus | opcua | ...
 
     class Config:
         env_file = ".env"
