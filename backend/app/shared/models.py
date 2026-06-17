@@ -3,7 +3,7 @@
 import uuid
 from datetime import datetime, timezone
 from sqlalchemy import DateTime, func
-from sqlalchemy.dialects.postgresql import UUID
+from app.core.database import GUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 class TimestampMixin:

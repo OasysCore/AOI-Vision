@@ -10,18 +10,14 @@ from app.core.config import settings
 
 # ====== SQLite UUID 兼容 ======
 class GUID(TypeDecorator):
+    """Cross-platform UUID"""
     impl = CHAR
     cache_ok = True
-
     def load_dialect_impl(self, dialect):
-        if dialect.name == "sqlite":
-            return dialect.type_descriptor(CHAR(36))
-        return dialect.type_descriptor(self.impl)
-
+        return dialect.type_descriptor(CHAR(36)) if dialect.name == "sqlite" else dialect.type_descriptor(self.impl)
     def process_bind_param(self, value, dialect):
         if value is None: return value
         return str(value) if dialect.name == "sqlite" else value
-
     def process_result_value(self, value, dialect):
         if value is None: return value
         return _uuid.UUID(value) if not isinstance(value, _uuid.UUID) else value
@@ -41,6 +37,9 @@ if "sqlite" in settings.DATABASE_URL:
 
 class Base(DeclarativeBase):
     pass
+
+# Export GUID for other modules to use
+__all__ = ["Base", "engine", "async_session", "get_db", "init_db", "GUID"]
 
 async def get_db():
     async with async_session() as session:

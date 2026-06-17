@@ -6,7 +6,8 @@ import uuid
 from datetime import datetime, timezone
 
 from sqlalchemy import DateTime, Float, ForeignKey, String, Text, func
-from sqlalchemy.dialects.postgresql import UUID, JSON
+from sqlalchemy import DateTime, Float, ForeignKey, String, Text, func, JSON
+from app.core.database import GUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
@@ -16,7 +17,7 @@ class Calibration(Base):
     __tablename__ = "calibrations"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+        GUID, primary_key=True, default=uuid.uuid4
     )
     name: Mapped[str] = mapped_column(String(200), nullable=False)
     pixels_per_mm: Mapped[float] = mapped_column(Float, nullable=False)
@@ -35,11 +36,11 @@ class MeasurementRecord(Base):
     __tablename__ = "measurement_records"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+        GUID, primary_key=True, default=uuid.uuid4
     )
     image_path: Mapped[str] = mapped_column(String(500), nullable=False)
     calibration_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("calibrations.id"), nullable=False
+        GUID, ForeignKey("calibrations.id"), nullable=False
     )
     annotations: Mapped[list] = mapped_column(JSON, default=list)
     created_at: Mapped[datetime] = mapped_column(

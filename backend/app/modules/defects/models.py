@@ -6,7 +6,7 @@ import uuid
 from datetime import datetime, timezone
 
 from sqlalchemy import Boolean, Float, ForeignKey, Integer, JSON, String, Text
-from sqlalchemy.dialects.postgresql import UUID
+from app.core.database import GUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
@@ -17,7 +17,7 @@ class InspectionRule(TimestampMixin, Base):
     __tablename__ = "inspection_rules"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+        GUID, primary_key=True, default=uuid.uuid4
     )
     name: Mapped[str] = mapped_column(String(200), nullable=False)
     type: Mapped[str] = mapped_column(
@@ -37,10 +37,10 @@ class InspectionResult(TimestampMixin, Base):
     __tablename__ = "inspection_results"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+        GUID, primary_key=True, default=uuid.uuid4
     )
     rule_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("inspection_rules.id", ondelete="CASCADE"), nullable=False
+        GUID, ForeignKey("inspection_rules.id", ondelete="CASCADE"), nullable=False
     )
     image_path: Mapped[str | None] = mapped_column(Text, nullable=True)
     defect_count: Mapped[int] = mapped_column(Integer, default=0)
@@ -49,7 +49,7 @@ class InspectionResult(TimestampMixin, Base):
     defects: Mapped[list] = mapped_column(JSON, default=list)
     confidence: Mapped[float] = mapped_column(Float, default=0.0)
     created_by: Mapped[uuid.UUID | None] = mapped_column(
-        UUID(as_uuid=True),
+        GUID,
         ForeignKey("users.id", ondelete="SET NULL"),
         nullable=True,
     )
