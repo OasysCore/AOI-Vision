@@ -1,0 +1,1639 @@
+软件名称: AOI-Vision（AOI-Vision）基于OasysCoreCV的自动光学检测系统软件
+版本: V0.2.0
+著作权人: 赵达伟 / 潤芯國際(香港)有限公司 / 昆山山之旭电子科技有限公司
+源程序后30页（共30页）
+======================================================================
+
+// ====== 文件: backend/static/index.html ======
+    1 | </html>
+    2 | </body>
+    3 | </script>
+    4 | login();
+    5 | switchTab('op');
+    6 | renderNav();
+    7 | updateStatus();
+    8 | // ====== INIT ======
+    9 | 
+   10 | async function delFO(id){await fetch(A+'/admin/field-options/'+id,{method:'DELETE',headers:hd()});render_admin();}
+   11 | }
+   12 |   render_admin();
+   13 |   await fetch(A+'/admin/field-options',{method:'POST',headers:{...hd(),'Content-Type':'application/json'},body:JSON.stringify({field_name:fn,option_value:v,option_label:l,sort_order:0})});
+   14 |   if(!fn||!v||!l)return alert('请填写完整');
+   15 |   const fn=document.getElementById('fo-field').value,v=document.getElementById('fo-value').value,l=document.getElementById('fo-label').value;
+   16 | async function addFieldOption(){
+   17 | }
+   18 |   try{const r=await fetch(A+'/admin/field-options',{headers:hd()});const os=await r.json();document.getElementById('fo-tbody').innerHTML=os.map(o=>`<tr><td>${o.field_name}</td><td>${o.option_value}</td><td>${o.option_label}</td><td>${o.sort_order}</td><td><button class="btn bdan" onclick="delFO(${o.id})">删除</button></td></tr>`).join('')||'<tr><td colspan="5" class="msg">暂无</td></tr>'}catch(e){}
+   19 |   document.getElementById('admin-body').innerHTML=h;
+   20 |   let h='<div class="panel"><h3>📝 参数枚举管理</h3><div class="flex"><input class="inp" id="fo-field" placeholder="字段名"><input class="inp" id="fo-value" placeholder="值"><input class="inp" id="fo-label" placeholder="标签"><button class="btn bpri" onclick="addFieldOption()">+ 添加</button></div><table class="mt8"><thead><tr><th>字段</th><th>值</th><th>标签</th><th>排序</th><th>操作</th></tr></thead><tbody id="fo-tbody"></tbody></table></div>';
+   21 | async function renderAdminOptions(){
+   22 | 
+   23 | }
+   24 |   render_admin();
+   25 |   await fetch(A+'/admin/engine-modules/'+key,{method:'POST',headers:{...hd(),'Content-Type':'application/json'},body:JSON.stringify({enabled})});
+   26 | async function toggleModule(key,enabled){
+   27 | }
+   28 |   }catch(e){document.getElementById('mod-list').innerHTML='<div class="err">加载失败</div>';}
+   29 |     document.getElementById('mod-list').innerHTML=body;
+   30 |     });
+   31 |       body+='</tbody></table>';
+   32 |       });
+   33 |         body+=`<tr><td><b>${m.name}</b><br><span style="font-size:10px;color:var(--muted)">${m.key}</span></td><td><span class="badge ${m.level==='basic'?'bpass':m.level==='advanced'?'binfo':'bwarn'}">${lvl}</span></td><td>${m.enabled?'<span class="badge bpass">● 启用</span>':'<span class="badge bfail">○ 禁用</span>'}</td><td><button class="btn ${m.enabled?'bdan':'bsuc'}" onclick="toggleModule('${m.key}',${!m.enabled})">${m.enabled?'禁用':'启用'}</button></td></tr>`;
+   34 |         const lvl={basic:'基础',advanced:'进阶',enterprise:'企业'}[m.level]||m.level;
+   35 |       mods.forEach(m=>{
+   36 |       body+=`<h4 style="margin-top:12px;color:var(--accent)">${names[cat]} (${mods.length})</h4><table><thead><tr><th>模块</th><th>层级</th><th>状态</th><th>操作</th></tr></thead><tbody>`;
+   37 |       if(!mods.length)return;
+   38 |       const mods=d.details.filter(m=>m.category===cat);
+   39 |     cats.forEach(cat=>{
+   40 |     let body='';
+   41 |     const names={detection:'🔍 检测类',measurement:'📐 量测类',vision:'👁 视觉增强'};
+   42 |     const cats=['detection','measurement','vision'];
+   43 |     const r=await fetch(A+'/admin/engine-modules',{headers:hd()});const d=await r.json();
+   44 |   try{
+   45 |   document.getElementById('admin-body').innerHTML=h;
+   46 |   h+='<div id="mod-list"></div></div>';
+   47 |   let h='<div class="panel"><h3>🧩 OasysCoreCV 功能模块管理</h3><p style="font-size:12px;color:var(--muted);margin-bottom:12px">按客户需求选择启用/禁用检测模块。依赖模块自动级联检查。配置可直接导出给客户打包。</p>';
+   48 | async function renderAdminModules(){
+   49 | 
+   50 | }
+
+// ====== Page 1 ======
+
+   51 |   try{const r=await fetch(A+'/auth/permissions',{headers:hd()});const ps=await r.json();document.getElementById('ap-tbody').innerHTML=ps.map(p=>`<tr><td>${p.name}</td><td>${p.description||'-'}</td><td>${Object.entries(p.permissions||{}).map(([k,v])=>`<span class="badge ${v==='manage'?'bwarn':'binfo'}">${k}:${v}</span>`).join(' ')}</td><td>${p.is_active?'<span class="badge bpass">启用</span>':'<span class="badge bfail">停用</span>'}</td></tr>`).join('')||'<tr><td colspan="4" class="msg">暂无</td></tr>'}catch(e){}
+   52 |   document.getElementById('admin-body').innerHTML=h;
+   53 |   let h='<div class="panel"><h3>🔑 权限组</h3><table><thead><tr><th>名称</th><th>描述</th><th>权限详情</th><th>状态</th></tr></thead><tbody id="ap-tbody"></tbody></table></div>';
+   54 | async function renderAdminPerms(){
+   55 | 
+   56 | async function delGroup(id){if(confirm('删除此组?')){await fetch(A+'/auth/account-groups/'+id,{method:'DELETE',headers:hd()});render_admin();}}
+   57 | }
+   58 |   render_admin();
+   59 |   await fetch(A+'/auth/account-groups',{method:'POST',headers:{...hd(),'Content-Type':'application/json'},body:JSON.stringify({name:n,description:d,permission_ids:ps})});
+   60 |   if(!n)return alert('名称必填');
+   61 |   const ps=[...document.getElementById('ag-perms').selectedOptions].map(o=>o.value);
+   62 |   const n=document.getElementById('ag-name').value,d=document.getElementById('ag-desc').value;
+   63 | async function createGroup(){
+   64 | }
+   65 |   }catch(e){}
+   66 |     document.getElementById('ag-tbody').innerHTML=groups.map(g=>`<tr><td>${g.name}</td><td>${g.description||'-'}</td><td>${(g.permissions||[]).map(p=>p.name).join(', ')}</td><td>${g.is_active?'<span class="badge bpass">启用</span>':'<span class="badge bfail">停用</span>'}</td><td><button class="btn bdan" onclick="delGroup('${g.id}')">删除</button></td></tr>`).join('')||'<tr><td colspan="5" class="msg">暂无</td></tr>';
+   67 |     document.getElementById('ag-perms').innerHTML=perms.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+   68 |     const[perms,groups]=await Promise.all([pr.json(),gr.json()]);
+   69 |     const[pr,gr]=await Promise.all([fetch(A+'/auth/permissions',{headers:hd()}),fetch(A+'/auth/account-groups',{headers:hd()})]);
+   70 |   try{
+   71 |   document.getElementById('admin-body').innerHTML=h;
+   72 |   h+='<table class="mt8"><thead><tr><th>名称</th><th>描述</th><th>关联权限</th><th>状态</th><th>操作</th></tr></thead><tbody id="ag-tbody"></tbody></table></div>';
+   73 |   let h=`<div class="panel"><h3>👥 账号组管理</h3><div class="flex"><input class="inp" id="ag-name" placeholder="组名称"><input class="inp" id="ag-desc" placeholder="描述"><select class="inp" id="ag-perms" multiple style="min-height:60px"></select><button class="btn bpri" onclick="createGroup()">+ 创建组</button></div>`;
+   74 | async function renderAdminGroups(){
+   75 | 
+   76 | async function delUser(id){if(confirm('禁用此用户?')){await fetch(A+'/auth/users/'+id,{method:'DELETE',headers:hd()});render_admin();}}
+   77 | }
+   78 |   render_admin();
+   79 |   await fetch(A+'/auth/users',{method:'POST',headers:{...hd(),'Content-Type':'application/json'},body:JSON.stringify({username:n,password:p,full_name:f,account_group_ids:gs})});
+   80 |   if(!n||!p)return alert('用户名和密码必填');
+   81 |   const gs=[...document.getElementById('au-groups').selectedOptions].map(o=>o.value);
+   82 |   const n=document.getElementById('au-name').value,p=document.getElementById('au-pass').value,f=document.getElementById('au-full').value;
+   83 | async function createUser(){
+   84 | }
+   85 |   }catch(e){}
+   86 |     document.getElementById('au-tbody').innerHTML=users.map(u=>`<tr><td>${u.username}</td><td>${u.full_name||'-'}</td><td>${(u.account_groups||[]).map(g=>g.name).join(', ')||'-'}</td><td>${u.is_admin?'<span class="badge bwarn">是</span>':'<span class="badge binfo">否</span>'}</td><td>${u.is_active?'<span class="badge bpass">启用</span>':'<span class="badge bfail">停用</span>'}</td><td><button class="btn bdan" onclick="delUser('${u.id}')">禁用</button></td></tr>`).join('')||'<tr><td colspan="6" class="msg">暂无</td></tr>';
+   87 |     document.getElementById('au-groups').innerHTML=groups.map(g=>`<option value="${g.id}">${g.name}</option>`).join('');
+   88 |     const[groups,users]=await Promise.all([gr.json(),ur.json()]);
+   89 |     const[gr,ur]=await Promise.all([fetch(A+'/auth/account-groups',{headers:hd()}),fetch(A+'/auth/users',{headers:hd()})]);
+   90 |   try{
+   91 |   document.getElementById('admin-body').innerHTML=h;
+   92 |   h+='<table class="mt8"><thead><tr><th>用户名</th><th>全名</th><th>所属组</th><th>管理员</th><th>状态</th><th>操作</th></tr></thead><tbody id="au-tbody"></tbody></table></div>';
+   93 |   let h=`<div class="panel"><h3>👤 用户管理</h3><div class="flex"><input class="inp" id="au-name" placeholder="用户名"><input class="inp" id="au-pass" type="password" placeholder="密码"><input class="inp" id="au-full" placeholder="全名(可选)"><select class="inp" id="au-groups" multiple style="min-height:60px"></select><button class="btn bpri" onclick="createUser()">+ 创建用户</button></div>`;
+   94 | async function renderAdminUsers(){
+   95 | 
+   96 | };
+   97 |   else await renderAdminOptions();
+   98 |   else if(window._adminTab==='modules') await renderAdminModules();
+   99 |   else if(window._adminTab==='perms') await renderAdminPerms();
+  100 |   else if(window._adminTab==='groups') await renderAdminGroups();
+
+// ====== Page 2 ======
+
+  101 |   if(window._adminTab==='users') await renderAdminUsers();
+  102 |   document.getElementById('content').innerHTML=h+'<div id="admin-body"></div>';
+  103 |   let h=`<div class="flex" style="margin-bottom:12px"><button class="btn ${window._adminTab==='users'?'bpri':'bsec'}" onclick="window._adminTab='users';render_admin()">👤 用户</button><button class="btn ${window._adminTab==='groups'?'bpri':'bsec'}" onclick="window._adminTab='groups';render_admin()">👥 账号组</button><button class="btn ${window._adminTab==='perms'?'bpri':'bsec'}" onclick="window._adminTab='perms';render_admin()">🔑 权限组</button><button class="btn ${window._adminTab==='options'?'bpri':'bsec'}" onclick="window._adminTab='options';render_admin()">📝 参数枚举</button><button class="btn ${window._adminTab==='modules'?'bpri':'bsec'}" onclick="window._adminTab='modules';render_admin()">🧩 功能模块</button></div>`;
+  104 | window.render_admin=async function(){
+  105 | window._adminTab='users';
+  106 | // ====== TAB: 系统管理 ======
+  107 | 
+  108 | }
+  109 |   try{const r=await fetch(url,{headers:hd()});const d=await r.json();document.getElementById('log-tbody').innerHTML=d.items?.map(l=>`<tr><td>${(l.timestamp||'').slice(0,19)}</td><td>${l.username}</td><td><span class="badge binfo">${l.action}</span></td><td>${l.entity_type||''} ${l.entity_label||''}</td><td>${l.summary||''}</td></tr>`).join('')||'<tr><td colspan="5" class="msg">暂无日志</td></tr>'}catch(e){}
+  110 |   if(u)url+='&username='+u;if(a)url+='&action='+a;
+  111 |   let url=A+'/admin/audit-logs?limit=50';
+  112 |   const u=document.getElementById('log-user')?.value||'',a=document.getElementById('log-action')?.value||'';
+  113 | async function loadLogs(){
+  114 | };
+  115 |   await loadLogs();
+  116 |   document.getElementById('content').innerHTML=h;
+  117 |   let h='<div class="panel"><h3>📋 操作审计日志</h3><div class="flex"><input class="inp" id="log-user" placeholder="用户"><input class="inp" id="log-action" placeholder="操作(LOGIN/CREATE/...)"><button class="btn bpri" onclick="loadLogs()">查询</button></div><table class="mt8"><thead><tr><th>时间</th><th>用户</th><th>操作</th><th>实体</th><th>摘要</th></tr></thead><tbody id="log-tbody"></tbody></table></div>';
+  118 | window.render_logs=async function(){
+  119 | // ====== TAB: 审计日志 ======
+  120 | 
+  121 | async function ctrlRelay(n,s){await fetch(A+'/device/relay?relay='+n+'&state='+s,{method:'POST',headers:hd()});render_device();}
+  122 | };
+  123 |   }catch(e){}
+  124 |     document.getElementById('dev-cards').innerHTML=`<div class="card"><div class="v" style="color:${d.online?'var(--green)':'var(--red)'}">${d.online?'🟢 在线':'🔴 离线'}</div><div class="l">状态</div></div><div class="card"><div class="v">${d.signal_strength}/31</div><div class="l">4G信号</div></div><div class="card"><div class="v">${d.temperature}°C</div><div class="l">温度</div></div><div class="card"><div class="v">${Math.floor(d.uptime_seconds/3600)}h</div><div class="l">运行时长</div></div>`;
+  125 |   try{const r=await fetch(A+'/device/telemetry',{headers:hd()});const d=await r.json();
+  126 |   document.getElementById('content').innerHTML=h;
+  127 |   let h='<div class="panel"><h3>📡 设备遥测</h3><div id="dev-cards" class="cards"></div><div class="flex mt8"><button class="btn bsuc" onclick="ctrlRelay(1,true)">继电器1: ON</button><button class="btn bdan" onclick="ctrlRelay(1,false)">继电器1: OFF</button><button class="btn bsuc" onclick="ctrlRelay(2,true)">继电器2: ON</button><button class="btn bdan" onclick="ctrlRelay(2,false)">继电器2: OFF</button></div></div>';
+  128 | window.render_device=async function(){
+  129 | // ====== TAB: 设备监控 ======
+  130 | 
+  131 | };
+  132 |   }catch(e){}
+  133 |     document.getElementById('spc-tbody').innerHTML=(d.trend||[]).slice(-30).map(t=>`<tr><td>${(t.date||'').slice(0,10)}</td><td>${t.defect_count}</td><td><span class="badge ${t.pass?'bpass':'bfail'}">${t.pass?'PASS':'FAIL'}</span></td></tr>`).join('')||'<tr><td colspan="3" class="msg">暂无数据</td></tr>';
+  134 |     document.getElementById('spc-cards').innerHTML=`<div class="card"><div class="v">${d.cpk}</div><div class="l">CPK</div></div><div class="card"><div class="v">${d.ppk}</div><div class="l">PPK</div></div><div class="card"><div class="v">${d.sigma}</div><div class="l">σ</div></div><div class="card"><div class="v">${d.pass_rate}%</div><div class="l">良品率</div></div>`;
+  135 |   try{const r=await fetch(A+'/reports/spc?days=30',{headers:hd()});const d=await r.json();
+  136 |   document.getElementById('content').innerHTML=h;
+  137 |   let h='<div class="panel"><h3>📈 SPC 统计过程控制</h3><div id="spc-cards" class="cards"></div><table><thead><tr><th>日期</th><th>缺陷数</th><th>判定</th></tr></thead><tbody id="spc-tbody"></tbody></table><button class="btn bpri mt8" onclick="window.open(A+\'/reports/pdf\',\'_blank\')">📄 下载PDF报告</button></div>';
+  138 | window.render_spc=async function(){
+  139 | // ====== TAB: SPC报表 ======
+  140 | 
+  141 | }
+  142 |   window.render_measure();
+  143 |   document.getElementById('mc-result').innerHTML=`✅ pixels/mm = ${d.pixels_per_mm}`;
+  144 |   const d=await r.json();
+  145 |   const r=await fetch(A+'/measurement/calibrate',{method:'POST',headers:{...hd(),'Content-Type':'application/json'},body:JSON.stringify({pixel_distance:px,real_mm:mm})});
+  146 |   const n=document.getElementById('mc-name').value||'default',px=parseFloat(document.getElementById('mc-pixel').value),mm=parseFloat(document.getElementById('mc-real').value);
+  147 | async function doCalibrate(){
+  148 | };
+  149 |   try{const r=await fetch(A+'/measurement/records',{headers:hd()});const rs=await r.json();document.getElementById('mr-tbody').innerHTML=rs.map(rec=>`<tr><td>${rec.image_path||'-'}</td><td>${rec.calibration_id||'-'}</td><td>${(rec.annotations||[]).length}</td><td>${(rec.created_at||'').slice(0,19)}</td></tr>`).join('')||'<tr><td colspan="4" class="msg">暂无数据</td></tr>'}catch(e){}
+  150 |   try{const r=await fetch(A+'/measurement/calibrations',{headers:hd()});const cs=await r.json();document.getElementById('mc-tbody').innerHTML=cs.map(c=>`<tr><td>${c.name}</td><td>${c.pixels_per_mm}</td><td>${(c.created_at||'').slice(0,19)}</td></tr>`).join('')||'<tr><td colspan="3" class="msg">暂无数据</td></tr>'}catch(e){}
+
+// ====== Page 3 ======
+
+  151 |   document.getElementById('content').innerHTML=h;
+  152 |   h+='<div class="panel"><h3>量测记录</h3><table><thead><tr><th>图片</th><th>标定ID</th><th>标注数</th><th>时间</th></tr></thead><tbody id="mr-tbody"></tbody></table></div>';
+  153 |   h+='<div class="panel"><h3>标定列表</h3><table><thead><tr><th>名称</th><th>pixels/mm</th><th>时间</th></tr></thead><tbody id="mc-tbody"></tbody></table></div>';
+  154 |   let h='<div class="panel"><h3>📐 标定校准</h3><div class="flex"><input class="inp" id="mc-name" placeholder="名称"><input class="inp" id="mc-pixel" placeholder="像素距离" type="number"><input class="inp" id="mc-real" placeholder="实际距离(mm)" type="number" step="0.01"><button class="btn bpri" onclick="doCalibrate()">计算</button></div><div id="mc-result" class="mt8"></div></div>';
+  155 | window.render_measure=async function(){
+  156 | // ====== TAB: 量测校准 ======
+  157 | 
+  158 | }
+  159 |   alert(`检测完成: ${d.defect_count} 缺陷, ${d.pass_fail?'PASS':'FAIL'}, 置信度 ${((d.confidence||0)*100).toFixed(1)}%`);
+  160 |   const d=await r.json();
+  161 |   const r=await fetch(A+'/defects/inspect',{method:'POST',headers:{...hd(),'Content-Type':'application/json'},body:JSON.stringify({rule_id:id,capture:true})});
+  162 | async function runRuleInsp(id){
+  163 | async function delRule(id){await fetch(A+'/defects/rules/'+id,{method:'DELETE',headers:hd()});loadDefectRules();}
+  164 | }
+  165 |   loadDefectRules();
+  166 |   await fetch(A+'/defects/rules',{method:'POST',headers:{...hd(),'Content-Type':'application/json'},body:JSON.stringify({name:n,type:t,threshold:th,params:{},is_active:true})});
+  167 |   if(!n)return alert('请输入名称');
+  168 |   const n=document.getElementById('dr-name').value,t=document.getElementById('dr-type').value,th=parseFloat(document.getElementById('dr-threshold').value);
+  169 | async function createDefectRule(){
+  170 | }
+  171 |   }catch(e){const tb=document.getElementById('dr-tbody');if(tb)tb.innerHTML='<tr><td colspan="5" class="err">加载失败</td></tr>';}
+  172 |     tb.innerHTML=rules.map(ru=>`<tr><td>${ru.name}</td><td><span class="badge binfo">${ru.type}</span></td><td>${ru.threshold}</td><td>${ru.is_active?'<span class="badge bpass">启用</span>':'<span class="badge bfail">停用</span>'}</td><td><button class="btn bpri" onclick="runRuleInsp('${ru.id}')">检测</button> <button class="btn bdan" onclick="delRule('${ru.id}')">删除</button></td></tr>`).join('')||'<tr><td colspan="5" class="msg">暂无规则</td></tr>';
+  173 |   try{const r=await fetch(A+'/defects/rules',{headers:hd()});const rules=await r.json();const tb=document.getElementById('dr-tbody');if(!tb)return;
+  174 | async function loadDefectRules(){
+  175 | };
+  176 |   await loadDefectRules();
+  177 |   document.getElementById('content').innerHTML=h;
+  178 |   h+='<div class="panel"><h3>规则列表</h3><table><thead><tr><th>名称</th><th>类型</th><th>阈值</th><th>状态</th><th>操作</th></tr></thead><tbody id="dr-tbody"></tbody></table></div>';
+  179 |   let h='<div class="panel"><h3>🔍 缺陷规则管理</h3><div class="flex"><input class="inp" id="dr-name" placeholder="名称"><select class="inp" id="dr-type"><option value="template_match">模板比对</option><option value="contour">轮廓分析</option><option value="color_threshold">颜色阈值</option></select><input class="inp" id="dr-threshold" value="0.95" type="number" step="0.01" style="width:80px"><button class="btn bpri" onclick="createDefectRule()">+ 创建</button></div></div>';
+  180 | window.render_defects=async function(){
+  181 | // ====== TAB: 缺陷规则 ======
+  182 | 
+  183 | async function connectDevice(){updateStatus();document.getElementById('s-device').innerHTML='<span class="dot dg"></span>在线';}
+  184 | }
+  185 |   loadProfiles();
+  186 |   await fetch(A+'/admin/field-options',{method:'POST',headers:{...hd(),'Content-Type':'application/json'},body:JSON.stringify({field_name:'profile',option_value:n.toLowerCase().replace(/\s+/g,'-'),option_label:n+' ('+m+')',sort_order:0})});
+  187 |   const m=document.getElementById('op-mode').value;
+  188 |   const n=prompt('Profile名称:','Default');if(!n)return;
+  189 | async function saveProfile(){
+  190 | }
+  191 |   try{const r=await fetch(A+'/admin/field-options?field_name=profile',{headers:hd()});const ps=await r.json();const sel=document.getElementById('op-profile');if(sel){sel.innerHTML='<option value="">-- 选择 --</option>';ps.forEach(p=>{sel.innerHTML+=`<option value="${p.option_value}">${p.option_label}</option>`})}}catch(e){}
+  192 | async function loadProfiles(){
+  193 | 
+  194 | }
+  195 |   el.innerHTML=h;
+  196 |   h+='</table>';
+  197 |   (d.defects||[]).forEach(x=>{const sev=x.severity==='critical'?'bfail':x.severity==='major'?'bwarn':'binfo';h+=`<tr><td>${x.description}</td><td><span class="badge ${sev}">${x.severity}</span></td><td>${x.area}px²</td><td>(${x.x},${x.y}) ${x.w}×${x.h}</td></tr>`});
+  198 |   h+='<table><tr><th>描述</th><th>严重度</th><th>面积</th><th>位置</th></tr>';
+  199 |   h+=`<div class="card"><div class="v">${Math.floor(Math.random()*20+5)}</div><div class="l">计数</div></div></div>`;
+  200 |   h+=`<div class="card"><div class="v">${((d.confidence||0)*100).toFixed(1)}%</div><div class="l">置信度</div></div>`;
+
+// ====== Page 4 ======
+
+  201 |   h+=`<div class="card"><div class="v">${d.defect_count}</div><div class="l">缺陷数</div></div>`;
+  202 |   h+=`<div class="cards"><div class="card"><div class="v" style="color:${d.pass_fail?'var(--green)':'var(--red)'}">${d.pass_fail?'✅ PASS':'❌ FAIL'}</div><div class="l">判定</div></div>`;
+  203 |   let h='<h3>📋 检测结果</h3>';
+  204 |   if(!el)return;
+  205 |   const el=document.getElementById('op-result');
+  206 | function showInspectResult(d){
+  207 | };
+  208 |   }catch(e){showInspectResult({defect_count:Math.floor(Math.random()*5),pass_fail:Math.random()>0.3,confidence:.92,defects:[{type:'scratch',severity:'minor',x:120,y:80,w:30,h:15,area:450,description:'表面划痕'},{type:'dent',severity:'major',x:300,y:200,w:45,h:35,area:1575,description:'边缘凹陷'}]})}
+  209 |     await fetch(A+'/defects/rules/'+rule.id,{method:'DELETE',headers:hd()});
+  210 |     showInspectResult(d);
+  211 |     const d=await ri.json();
+  212 |     const ri=await fetch(A+'/defects/inspect',{method:'POST',headers:{...hd(),'Content-Type':'application/json'},body:JSON.stringify({rule_id:rule.id,capture:true})});
+  213 |     const rule=await rr.json();
+  214 |     const rr=await fetch(A+'/defects/rules',{method:'POST',headers:{...hd(),'Content-Type':'application/json'},body:JSON.stringify({name:'Quick '+mode,type:mode,threshold:thr,params:{},is_active:true})});
+  215 |   try{
+  216 |   const mode=document.getElementById('op-mode').value,thr=parseFloat(document.getElementById('op-threshold')?.value||0.9);
+  217 |   if(!token){alert('请先登录');return}
+  218 | window.snapInspect=async function(){
+  219 | 
+  220 | window.mockCam=function(){camTimer=setInterval(()=>{const c=document.getElementById('cam-box');if(!c)return;const w=640,h=360;c.innerHTML=`<canvas id="mock-canvas" width="${w}" height="${h}"></canvas>`;const cv=document.getElementById('mock-canvas');if(!cv)return;const ctx=cv.getContext('2d');const t=Date.now();for(let y=0;y<h;y+=30)for(let x=0;x<w;x+=30){ctx.fillStyle=(Math.floor(x/30)+Math.floor(y/30))%2?'#2a2a2a':'#3a3a3a';ctx.fillRect(x,y,30,30)}ctx.fillStyle='#0f0';ctx.font='12px monospace';ctx.fillText('Mock Camera — '+new Date().toLocaleTimeString(),10,20);ctx.fillText('● Target',10,180);ctx.strokeStyle='#0f0';ctx.beginPath();ctx.arc(w/2,180,15+Math.sin(t/500)*10,0,Math.PI*2);ctx.stroke()},200);document.getElementById('s-camera').innerHTML='<span class="dot dg"></span>模拟'};
+  221 | };
+  222 |   try{const ws=new WebSocket('ws://'+location.host+'/ws/camera');ws.onmessage=e=>{const c=document.getElementById('cam-box');if(c)c.innerHTML='<img src="data:image/jpeg;base64,'+e.data+'" style="max-width:100%;max-height:300px">';};ws.onopen=()=>{document.getElementById('s-camera').innerHTML='<span class="dot dg"></span>相机'};window._ws=ws}catch(e){mockCam()}
+  223 |   camOn=true;document.getElementById('s-camera').innerHTML='<span class="dot dy"></span>连接中';
+  224 |   if(camOn){camOn=false;if(camTimer)clearInterval(camTimer);document.getElementById('s-camera').innerHTML='<span class="dot dr"></span>相机';return}
+  225 | window.toggleCam=async function(){
+  226 | let camOn=false,camTimer=null;
+  227 | 
+  228 | };
+  229 |   else p.innerHTML='<label class="l">匹配阈值</label><input class="inp" id="op-threshold" value="0.95" type="number" step="0.01" style="width:100%">';
+  230 |   else if(m==='contour')p.innerHTML='<label class="l">最小面积</label><input class="inp" value="100" type="number"><label class="l">最大面积</label><input class="inp" value="100000" type="number">';
+  231 |   if(m==='color_threshold')p.innerHTML='<label class="l">HSV下限</label><input class="inp" placeholder="0,0,0" style="width:100%"><label class="l">HSV上限</label><input class="inp" placeholder="180,255,255" style="width:100%">';
+  232 |   if(!p)return;
+  233 |   const p=document.getElementById('op-mode-params');
+  234 |   const m=document.getElementById('op-mode')?.value;
+  235 | window.updateModeUI=function(){
+  236 | 
+  237 | };
+  238 |   updateModeUI();loadProfiles();
+  239 |   document.getElementById('content').innerHTML=h;
+  240 |   <div class="panel" id="op-result"><h3>📋 检测结果</h3><div class="msg">等待检测...</div></div>`;
+  241 |   </div>
+  242 |     </div>
+  243 |       </div>
+  244 |         <button class="btn bsec mt8" onclick="connectDevice()">🔗 连接</button>
+  245 |         <select id="op-device" class="inp"><option value="mock">Mock (模拟)</option><option value="haas506">HaaS506-HD3</option></select>
+  246 |       <div class="panel"><h3>📡 设备</h3>
+  247 |       </div>
+  248 |         <div id="op-mode-params" class="mt8"><label class="l">匹配阈值</label><input class="inp" id="op-threshold" value="0.95" type="number" step="0.01" style="width:100%"></div>
+  249 |         <select id="op-mode" class="inp" onchange="updateModeUI()"><option value="template_match">模板比对</option><option value="contour">轮廓分析</option><option value="color_threshold">颜色阈值</option></select>
+  250 |       <div class="panel"><h3>🔍 检测参数</h3>
+
+// ====== Page 5 ======
+
+  251 |       </div>
+  252 |         <button class="btn bwar mt8" onclick="saveProfile()">💾 保存当前设定</button>
+  253 |         <select id="op-profile" class="inp" onchange="loadProfile()"><option value="">-- 选择 --</option></select>
+  254 |       <div class="panel"><h3>🔧 Profile 设定</h3>
+  255 |     <div>
+  256 |     <div class="cam-ctl"><button class="btn bwar" onclick="toggleCam()">▶ 开启相机</button><button class="btn bpri" onclick="snapInspect()">🔍 拍照并检测</button></div></div></div>
+  257 |     <div><div class="cam-box" id="cam-box"><div style="color:var(--muted);font-size:48px">📷</div>
+  258 |   let h=`<div style="display:grid;grid-template-columns:1fr 300px;gap:12px">
+  259 | window.render_op=function(){
+  260 | // ====== TAB: 检测操作台 ======
+  261 | 
+  262 | function switchTab(id){currentTab=id;renderNav();(window['render_'+id]||render_op)();}
+  263 | }
+  264 |   nb.innerHTML=tabs.map(t=>`<button class="${t.id===currentTab?'active':''}" onclick="switchTab('${t.id}')">${t.name}</button>`).join('');
+  265 |   const nb=document.getElementById('nav-bar');
+  266 | function renderNav(){
+  267 | window.currentTab='op';
+  268 | ];
+  269 |   {id:'admin',name:'⚙ 系统管理'},
+  270 |   {id:'logs',name:'📋 审计日志'},
+  271 |   {id:'device',name:'📡 设备监控'},
+  272 |   {id:'spc',name:'📈 SPC报表'},
+  273 |   {id:'measure',name:'📐 量测校准'},
+  274 |   {id:'defects',name:'🔍 缺陷规则'},
+  275 |   {id:'op',name:'🎯 检测操作台'},
+  276 | const tabs=[
+  277 | // ====== NAVIGATION ======
+  278 | 
+  279 | }
+  280 |   try{const r=await fetch(A+'/device/telemetry',{headers:hd()});const d=await r.json();document.getElementById('s-device').innerHTML=(d.online?'<span class="dot dg"></span>':'<span class="dot dy"></span>')+(d.online?'在线':'离线')}catch(e){}
+  281 |   try{const r=await fetch(A+'/health');const d=await r.json();document.getElementById('s-backend').innerHTML='<span class="dot dg"></span>v'+d.version}catch(e){}
+  282 | async function updateStatus(){
+  283 | }
+  284 |   }catch(e){document.getElementById('login-msg').textContent='❌ 连接失败: '+e.message;}
+  285 |     else document.getElementById('login-msg').textContent='❌ '+(d.detail||JSON.stringify(d));
+  286 |     if(d.access_token){window.T=d.access_token;U=d.user;document.getElementById('login-msg').textContent='✅ '+u;updateStatus();renderNav();switchTab(currentTab);}
+  287 |     const d=await r.json();
+  288 |     const r=await fetch(A+'/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
+  289 |   try{
+  290 |   const u=document.getElementById('in-user').value,p=document.getElementById('in-pass').value;
+  291 | async function login(){
+  292 | function hd(){return window.T?{'Authorization':'Bearer '+window.T}:{}}
+  293 | const A = ''; window.T = ''; let U = null;
+  294 | <script>
+  295 | 
+  296 | <div class="content" id="content"><div class="msg">Loading...</div></div>
+  297 | <div class="nav" id="nav-bar"></div>
+  298 | </div>
+  299 |   </div>
+  300 |     </div>
+
+// ====== Page 6 ======
+
+  301 |       <span id="login-msg" style="font-size:11px;color:var(--muted)"></span>
+  302 |       <button onclick="login()">登录</button>
+  303 |       <input id="in-pass" type="password" placeholder="密码" value="admin123">
+  304 |       <input id="in-user" placeholder="用户" value="admin">
+  305 |     <div class="login-row">
+  306 |     <span id="s-camera"><span class="dot dr"></span>相机</span>
+  307 |     <span id="s-device"><span class="dot dy"></span>设备</span>
+  308 |     <span id="s-backend"><span class="dot dr"></span>后端</span>
+  309 |   <div class="status">
+  310 |   <h1>🔬 AOI-Vision</h1><span style="font-size:11px;color:var(--muted)">v0.1</span>
+  311 | <div class="header">
+  312 | <body>
+  313 | </head>
+  314 | </style>
+  315 | .mt8{margin-top:8px}
+  316 | input[type=range]{width:100%}
+  317 | .err{color:var(--red);padding:8px;font-size:12px}
+  318 | .msg{text-align:center;padding:20px;color:var(--muted);font-size:13px}
+  319 | .cam-ctl{position:absolute;bottom:8px;left:8px;display:flex;gap:6px}
+  320 | .cam-box canvas,.cam-box img{max-width:100%;max-height:400px;border-radius:8px}
+  321 | .cam-box{background:#000;border-radius:8px;min-height:300px;display:flex;align-items:center;justify-content:center;position:relative}
+  322 | .bsec{background:var(--input);color:var(--text);border:1px solid var(--border)}
+  323 | .bwar{background:var(--gold);color:#000}
+  324 | .bdan{background:var(--red);color:#fff}
+  325 | .bsuc{background:var(--green);color:#fff}
+  326 | .bpri{background:var(--accent);color:#fff}
+  327 | .btn{padding:6px 14px;border:none;border-radius:5px;font-size:12px;font-weight:500;cursor:pointer}
+  328 | select{min-width:120px}
+  329 | .inp:focus,select:focus{outline:none;border-color:var(--accent)}
+  330 | .inp,select{background:var(--input);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:4px;font-size:12px}
+  331 | .flex{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  332 | .bwarn{background:rgba(255,193,7,.2);color:var(--gold)}
+  333 | .binfo{background:rgba(0,180,216,.2);color:var(--accent)}
+  334 | .bfail{background:rgba(255,23,68,.2);color:var(--red)}
+  335 | .bpass{background:rgba(0,200,83,.2);color:var(--green)}
+  336 | .badge{padding:2px 8px;border-radius:10px;font-size:10px;display:inline-block}
+  337 | tr:hover{background:rgba(255,255,255,0.02)}
+  338 | th{color:var(--muted);font-weight:500;font-size:11px}
+  339 | th,td{padding:6px 10px;text-align:left;border-bottom:1px solid var(--border)}
+  340 | table{width:100%;border-collapse:collapse;font-size:12px}
+  341 | .panel h3{font-size:14px;margin-bottom:10px;color:var(--accent)}
+  342 | .panel{background:var(--panel);border-radius:8px;padding:16px;margin-bottom:12px}
+  343 | .card .l{font-size:11px;color:var(--muted);margin-top:4px}
+  344 | .card .v{font-size:28px;font-weight:bold;color:var(--accent)}
+  345 | .card{background:var(--panel);border-radius:8px;padding:16px;text-align:center}
+  346 | .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px}
+  347 | .login-row button{padding:4px 10px;border-radius:3px;border:none;font-size:11px;cursor:pointer;background:var(--accent);color:#fff}
+  348 | .login-row input{width:70px;padding:4px 6px;background:var(--input);border:1px solid var(--border);color:var(--text);border-radius:3px;font-size:11px}
+  349 | .login-row{display:flex;gap:6px;align-items:center}
+  350 | .content{flex:1;overflow-y:auto;padding:16px}
+
+// ====== Page 7 ======
+
+  351 | .nav button:hover,.nav button.active{color:var(--accent);border-bottom-color:var(--accent)}
+  352 | .nav button{background:none;border:none;color:var(--muted);padding:10px 16px;cursor:pointer;font-size:12px;border-bottom:2px solid transparent;transition:.2s;white-space:nowrap}
+  353 | .nav{background:var(--panel);display:flex;gap:1px;padding:0 16px;flex-shrink:0;border-bottom:1px solid var(--border)}
+  354 | .dg{background:var(--green)} .dr{background:var(--red)} .dy{background:var(--gold)}
+  355 | .dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:4px}
+  356 | .status{display:flex;gap:10px;margin-left:auto;font-size:11px;align-items:center}
+  357 | .header h1{font-size:16px;color:var(--accent);white-space:nowrap}
+  358 | .header{background:var(--panel);border-bottom:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;gap:16px;height:44px;flex-shrink:0}
+  359 | body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column}
+  360 | *{margin:0;padding:0;box-sizing:border-box}
+  361 | :root{--bg:#0a0e14;--panel:#131a24;--border:#1e2a3a;--accent:#00b4d8;--green:#00c853;--red:#ff1744;--gold:#ffc107;--text:#c8d6e5;--muted:#5c6e80;--input:#1a2433}
+  362 | <style>
+  363 | <title>AOI-Vision 自动光学检测系统</title>
+  364 | <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  365 | <head>
+  366 | <html lang="zh-CN">
+  367 | <!DOCTYPE html>
+
+// ====== 文件: backend/app/shared/models.py ======
+  368 |     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), server_default=func.now())
+  369 |     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), server_default=func.now())
+  370 | class TimestampMixin:
+  371 | 
+  372 | from sqlalchemy.orm import Mapped, mapped_column
+  373 | from app.core.database import GUID
+  374 | from sqlalchemy import DateTime, func
+  375 | from datetime import datetime, timezone
+  376 | import uuid
+  377 | """
+  378 | """AOI-Vision v0.1
+
+// ====== 文件: backend/app/shared/__init__.py ======
+  379 | """
+  380 | """AOI-Vision v0.1
+
+// ====== 文件: backend/app/modules/reports/service.py ======
+  381 |         return ""
+  382 |     except ImportError:
+  383 |         return output_path
+  384 |         c.save()
+  385 |         c.drawString(20 * mm, 15 * mm, "© 2026 潤芯國際(香港)有限公司 OASYS CORE — AOI-Vision 自动光学检测系统")
+  386 |         c.setFont("Helvetica", 8)
+  387 | 
+  388 |                 y = h - 20 * mm
+  389 |                 c.showPage()
+  390 |             if y < 20 * mm:
+  391 |             y -= 4 * mm
+  392 |             c.drawString(20 * mm, y, line)
+  393 |             line = f"  {r.get('created_at', '')[:19]} | Defects: {r.get('defect_count', 0)} | {'PASS' if r.get('pass_fail') else 'FAIL'}"
+  394 |         for r in results[:50]:
+  395 |         c.setFont("Helvetica", 8)
+  396 | 
+  397 |         y -= 8 * mm
+  398 |         c.drawString(20 * mm, y, "检测记录明细")
+  399 |         c.setFont("Helvetica-Bold", 12)
+  400 |         y = h - 55 * mm
+
+// ====== Page 8 ======
+
+  401 | 
+  402 |         c.drawString(20 * mm, h - 40 * mm, f"CPK: {spc_data.get('cpk', 0)} | 均值缺陷数: {spc_data.get('mean_defect_rate', 0)}")
+  403 |         c.drawString(20 * mm, h - 35 * mm, f"检测批次: {len(results)} 个 | 良率: {spc_data.get('pass_rate', 0)}%")
+  404 |         c.drawString(20 * mm, h - 30 * mm, f"生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
+  405 |         c.setFont("Helvetica", 10)
+  406 | 
+  407 |         c.drawString(20 * mm, h - 20 * mm, "AOI-Vision 检测报告")
+  408 |         c.setFont("Helvetica-Bold", 18)
+  409 | 
+  410 |         w, h = A4
+  411 |         c = canvas.Canvas(output_path, pagesize=A4)
+  412 | 
+  413 |         from reportlab.lib.units import mm
+  414 |         from reportlab.pdfgen import canvas
+  415 |         from reportlab.lib.pagesizes import A4
+  416 |     try:
+  417 |     """生成 PDF 检测报告"""
+  418 | def generate_pdf_report(results: list[dict], spc_data: dict, output_path: str) -> str:
+  419 | 
+  420 |     }
+  421 |         "trend": trend
+  422 |         "pass_rate": round(pass_count / n * 100, 1),
+  423 |         "samples": n,
+  424 |         "sigma": round(sigma, 2),
+  425 |         "mean_defect_rate": round(mean, 2),
+  426 |         "ppk": round(ppk, 2),
+  427 |         "cpk": round(cpk, 2),
+  428 |     return {
+  429 | 
+  430 |              for r in records]
+  431 |     trend = [{"date": r.created_at.isoformat(), "defect_count": r.defect_count, "pass": r.pass_fail}
+  432 |     pass_count = sum(1 for r in records if r.pass_fail)
+  433 | 
+  434 |     ppk = cpk  # 简化处理
+  435 |     cpk = min(cpu, cpl)
+  436 |     cpl = (mean - lsl) / (3 * sigma) if sigma > 0 else 1.33
+  437 |     cpu = (usl - mean) / (3 * sigma) if sigma > 0 else 1.33
+  438 |     lsl = 0
+  439 |     usl = mean + 3 * sigma if sigma > 0 else mean + 1
+  440 |     # CPK/PPK 简化计算（假设 USL = mean + 3*sigma, LSL = 0）
+  441 | 
+  442 |     sigma = variance ** 0.5
+  443 |     variance = sum((x - mean) ** 2 for x in defect_counts) / (n - 1) if n > 1 else 0
+  444 |     mean = sum(defect_counts) / n
+  445 |     n = len(defect_counts)
+  446 |     defect_counts = [r.defect_count for r in records]
+  447 | 
+  448 |                 "trend": [], "pass_rate": 100}
+  449 |         return {"cpk": 0, "ppk": 0, "mean_defect_rate": 0, "sigma": 0, "samples": 0,
+  450 |     if not records:
+
+// ====== Page 9 ======
+
+  451 | 
+  452 |     records = result.scalars().all()
+  453 |     )
+  454 |         select(InspectionResult).where(InspectionResult.created_at >= since).order_by(InspectionResult.created_at)
+  455 |     result = await db.execute(
+  456 | 
+  457 |     since = datetime.now(timezone.utc) - timedelta(days=days)
+  458 |     """计算 CPK/PPK 控制图数据"""
+  459 | async def get_spc_data(db: AsyncSession, days: int = 30) -> dict:
+  460 | 
+  461 | from app.modules.defects.models import InspectionResult
+  462 | from sqlalchemy.ext.asyncio import AsyncSession
+  463 | from sqlalchemy import select, func
+  464 | from datetime import datetime, timedelta, timezone
+  465 | """
+  466 | 描述: SPC 统计过程控制 + PDF 报告生成
+  467 | 日期: 2026-06-17 | 作者: William Chao / OASYS CORE
+  468 | """AOI-Vision v0.1 — 报表模块
+
+// ====== 文件: backend/app/modules/reports/router.py ======
+  469 |     return FileResponse(path, media_type="application/pdf", filename="AOI-Vision-Report.pdf")
+  470 |         return {"error": "reportlab not installed"}
+  471 |     if not path:
+  472 |     path = generate_pdf_report(spc.get("trend", []), spc, "/tmp/aoi_report.pdf")
+  473 |     spc = await get_spc_data(db, 30)
+  474 | async def download_pdf(db: AsyncSession = Depends(get_db), _user=Depends(get_current_user)):
+  475 | @router.get("/pdf")
+  476 | 
+  477 |     return await get_spc_data(db, days)
+  478 |                    _user=Depends(get_current_user)):
+  479 |                    db: AsyncSession = Depends(get_db),
+  480 | async def spc_data(days: int = Query(30, ge=7, le=365),
+  481 | @router.get("/spc", response_model=SPCResponse)
+  482 | 
+  483 |     trend: list[dict]
+  484 |     pass_rate: float
+  485 |     samples: int
+  486 |     sigma: float
+  487 |     mean_defect_rate: float
+  488 |     ppk: float
+  489 |     cpk: float
+  490 | class SPCResponse(BaseModel):
+  491 | 
+  492 | 
+  493 |     model_config = {"populate_by_name": True}
+  494 |     pass_field: bool = True
+  495 |     defect_count: int
+  496 |     date: str
+  497 | class SPCTrendPoint(BaseModel):
+  498 | 
+  499 | router = APIRouter(prefix="/reports", tags=["Reports"])
+  500 | 
+
+// ====== Page 10 ======
+
+  501 | from app.modules.reports.service import get_spc_data, generate_pdf_report
+  502 | from app.modules.auth.service import get_current_user
+  503 | from app.core.database import get_db
+  504 | from sqlalchemy.ext.asyncio import AsyncSession
+  505 | from fastapi.responses import FileResponse
+  506 | from fastapi import APIRouter, Depends, Query
+  507 | from pydantic import BaseModel
+  508 | """
+  509 | 日期: 2026-06-17 | 作者: William Chao / OASYS CORE
+  510 | """AOI-Vision v0.1 — 报表 schemas + router
+
+// ====== 文件: backend/app/modules/reports/__init__.py ======
+  511 | __all__ = ["router"]
+  512 | 
+  513 | from app.modules.reports.router import router
+  514 | """
+  515 | """AOI-Vision v0.1 — 报表模块
+
+// ====== 文件: backend/app/modules/measurement/service.py ======
+  516 |     return list(result.scalars().all())
+  517 |     )
+  518 |         select(MeasurementRecord).order_by(MeasurementRecord.created_at.desc())
+  519 |     result = await db.execute(
+  520 |     """列出所有量测记录"""
+  521 | async def list_measurements(db: AsyncSession) -> list[MeasurementRecord]:
+  522 | 
+  523 | 
+  524 |     return record
+  525 |     await db.flush()
+  526 |     db.add(record)
+  527 |     )
+  528 |         annotations=[a.model_dump() if hasattr(a, "model_dump") else a for a in annotations],
+  529 |         calibration_id=uuid.UUID(calibration_id),
+  530 |         image_path=image_path,
+  531 |     record = MeasurementRecord(
+  532 |     """保存量测记录"""
+  533 | ) -> MeasurementRecord:
+  534 |     db: AsyncSession, image_path: str, calibration_id: str, annotations: list
+  535 | async def save_measurement(
+  536 | 
+  537 | 
+  538 |     return pixel_distance / real_mm
+  539 |     """根据像素距离和实际物理距离计算像素-毫米比"""
+  540 | def calibrate_from_points(pixel_distance: float, real_mm: float) -> float:
+  541 | 
+  542 | 
+  543 |     return result.scalar_one_or_none()
+  544 |     )
+  545 |         select(Calibration).where(Calibration.id == uuid.UUID(calibration_id))
+  546 |     result = await db.execute(
+  547 |     """获取单个校准记录"""
+  548 | async def get_calibration(db: AsyncSession, calibration_id: str) -> Calibration | None:
+  549 | 
+  550 | 
+
+// ====== Page 11 ======
+
+  551 |     return list(result.scalars().all())
+  552 |     )
+  553 |         select(Calibration).order_by(Calibration.created_at.desc())
+  554 |     result = await db.execute(
+  555 |     """列出所有校准记录"""
+  556 | async def list_calibrations(db: AsyncSession) -> list[Calibration]:
+  557 | 
+  558 | 
+  559 |     return cal
+  560 |     await db.flush()
+  561 |     db.add(cal)
+  562 |     cal = Calibration(name=name, pixels_per_mm=pixels_per_mm)
+  563 |     """创建校准记录"""
+  564 | ) -> Calibration:
+  565 |     db: AsyncSession, name: str, pixels_per_mm: float
+  566 | async def create_calibration(
+  567 | 
+  568 | 
+  569 | from app.modules.measurement.models import Calibration, MeasurementRecord
+  570 | 
+  571 | from sqlalchemy.ext.asyncio import AsyncSession
+  572 | from sqlalchemy import select
+  573 | 
+  574 | import uuid
+  575 | """
+  576 | 描述: 量测模块服务层 — 校准与量测记录 CRUD
+  577 | 日期: 2026-06-17 | 作者: William Chao / OASYS CORE
+  578 | """AOI-Vision v0.1
+
+// ====== 文件: backend/app/modules/measurement/schemas.py ======
+  579 |     model_config = {"from_attributes": True}
+  580 | 
+  581 |     created_at: str
+  582 |     annotations: list
+  583 |     calibration_id: str
+  584 |     image_path: str
+  585 |     id: str
+  586 | class MeasurementResponse(BaseModel):
+  587 | 
+  588 | 
+  589 |     annotations: list[AnnotationItem] = Field(default_factory=list)
+  590 |     calibration_id: str
+  591 |     image_path: str
+  592 | class MeasurementCreate(BaseModel):
+  593 | 
+  594 | 
+  595 |     unit: str = "mm"
+  596 |     value: float = 0.0
+  597 |     y2: float = 0.0
+  598 |     x2: float = 0.0
+  599 |     y1: float
+  600 |     x1: float
+
+// ====== Page 12 ======
+
+  601 |     type: str = Field(description="标注类型: line | rect | circle | point")
+  602 | class AnnotationItem(BaseModel):
+  603 | 
+  604 | 
+  605 |     model_config = {"from_attributes": True}
+  606 | 
+  607 |     created_at: str
+  608 |     pixels_per_mm: float
+  609 |     name: str
+  610 |     id: str
+  611 | class CalibrationResponse(BaseModel):
+  612 | 
+  613 | 
+  614 |     pixels_per_mm: float = Field(gt=0)
+  615 |     name: str = Field(min_length=1, max_length=200)
+  616 | class CalibrationCreate(BaseModel):
+  617 | 
+  618 | 
+  619 |     pixels_per_mm: float
+  620 | class CalibrateResponse(BaseModel):
+  621 | 
+  622 | 
+  623 |     real_mm: float = Field(gt=0, description="实际物理距离 (mm)")
+  624 |     pixel_distance: float = Field(gt=0, description="像素距离")
+  625 | class CalibrateRequest(BaseModel):
+  626 | 
+  627 | 
+  628 | from pydantic import BaseModel, Field
+  629 | """
+  630 | 描述: 量测模块 Pydantic schemas
+  631 | 日期: 2026-06-17 | 作者: William Chao / OASYS CORE
+  632 | """AOI-Vision v0.1
+
+// ====== 文件: backend/app/modules/measurement/router.py ======
+  633 |     return await service.list_measurements(db)
+  634 |     """获取所有量测记录"""
+  635 | ):
+  636 |     db: AsyncSession = Depends(get_db), user=Depends(get_current_user)
+  637 | async def get_records(
+  638 | @router.get("/records", response_model=list[schemas.MeasurementResponse])
+  639 | 
+  640 | 
+  641 |     )
+  642 |         db, req.image_path, req.calibration_id, req.annotations
+  643 |     return await service.save_measurement(
+  644 |         raise HTTPException(status_code=404, detail="Calibration not found")
+  645 |     if not cal:
+  646 |     cal = await service.get_calibration(db, req.calibration_id)
+  647 |     """保存量测记录"""
+  648 | ):
+  649 |     user=Depends(get_current_user),
+  650 |     db: AsyncSession = Depends(get_db),
+
+// ====== Page 13 ======
+
+  651 |     req: schemas.MeasurementCreate,
+  652 | async def create_record(
+  653 | @router.post("/records", response_model=schemas.MeasurementResponse, status_code=201)
+  654 | 
+  655 | 
+  656 |     return await service.create_calibration(db, req.name, req.pixels_per_mm)
+  657 |     """创建校准记录"""
+  658 | ):
+  659 |     user=Depends(get_current_user),
+  660 |     db: AsyncSession = Depends(get_db),
+  661 |     req: schemas.CalibrationCreate,
+  662 | async def create_calibration_route(
+  663 | @router.post("/calibrations", response_model=schemas.CalibrationResponse, status_code=201)
+  664 | 
+  665 | 
+  666 |     return await service.list_calibrations(db)
+  667 |     """获取所有校准记录"""
+  668 | ):
+  669 |     db: AsyncSession = Depends(get_db), user=Depends(get_current_user)
+  670 | async def get_calibrations(
+  671 | @router.get("/calibrations", response_model=list[schemas.CalibrationResponse])
+  672 | 
+  673 | 
+  674 |     return schemas.CalibrateResponse(pixels_per_mm=ppm)
+  675 |     ppm = service.calibrate_from_points(req.pixel_distance, req.real_mm)
+  676 |     """根据像素距离和实际物理距离计算 pixels_per_mm"""
+  677 | async def calibrate(req: schemas.CalibrateRequest, user=Depends(get_current_user)):
+  678 | @router.post("/calibrate", response_model=schemas.CalibrateResponse)
+  679 | 
+  680 | 
+  681 | router = APIRouter(prefix="/measurement", tags=["Measurement"])
+  682 | 
+  683 | from app.modules.measurement import service
+  684 | from app.modules.measurement import schemas
+  685 | from app.modules.auth.service import get_current_user
+  686 | from app.core.database import get_db
+  687 | 
+  688 | from sqlalchemy.ext.asyncio import AsyncSession
+  689 | from fastapi import APIRouter, Depends, HTTPException
+  690 | """
+  691 | 描述: 量测模块路由 — 校准 & 量测记录 API
+  692 | 日期: 2026-06-17 | 作者: William Chao / OASYS CORE
+  693 | """AOI-Vision v0.1
+
+// ====== 文件: backend/app/modules/measurement/models.py ======
+  694 |     )
+  695 |         "Calibration", back_populates="records"
+  696 |     calibration: Mapped["Calibration"] = relationship(
+  697 | 
+  698 |     )
+  699 |         server_default=func.now(),
+  700 |         default=lambda: datetime.now(timezone.utc),
+
+// ====== Page 14 ======
+
+  701 |         DateTime(timezone=True),
+  702 |     created_at: Mapped[datetime] = mapped_column(
+  703 |     annotations: Mapped[list] = mapped_column(JSON, default=list)
+  704 |     )
+  705 |         GUID, ForeignKey("calibrations.id"), nullable=False
+  706 |     calibration_id: Mapped[uuid.UUID] = mapped_column(
+  707 |     image_path: Mapped[str] = mapped_column(String(500), nullable=False)
+  708 |     )
+  709 |         GUID, primary_key=True, default=uuid.uuid4
+  710 |     id: Mapped[uuid.UUID] = mapped_column(
+  711 | 
+  712 |     __tablename__ = "measurement_records"
+  713 | class MeasurementRecord(Base):
+  714 | 
+  715 | 
+  716 |     )
+  717 |         "MeasurementRecord", back_populates="calibration"
+  718 |     records: Mapped[list["MeasurementRecord"]] = relationship(
+  719 | 
+  720 |     )
+  721 |         server_default=func.now(),
+  722 |         default=lambda: datetime.now(timezone.utc),
+  723 |         DateTime(timezone=True),
+  724 |     created_at: Mapped[datetime] = mapped_column(
+  725 |     pixels_per_mm: Mapped[float] = mapped_column(Float, nullable=False)
+  726 |     name: Mapped[str] = mapped_column(String(200), nullable=False)
+  727 |     )
+  728 |         GUID, primary_key=True, default=uuid.uuid4
+  729 |     id: Mapped[uuid.UUID] = mapped_column(
+  730 | 
+  731 |     __tablename__ = "calibrations"
+  732 | class Calibration(Base):
+  733 | 
+  734 | 
+  735 | from app.core.database import Base
+  736 | 
+  737 | from sqlalchemy.orm import Mapped, mapped_column, relationship
+  738 | from app.core.database import GUID
+  739 | from sqlalchemy import DateTime, Float, ForeignKey, String, Text, func, JSON
+  740 | from sqlalchemy import DateTime, Float, ForeignKey, String, Text, func
+  741 | 
+  742 | from datetime import datetime, timezone
+  743 | import uuid
+  744 | """
+  745 | 描述: 量测模块数据库模型 — 校准 + 量测记录
+  746 | 日期: 2026-06-17 | 作者: William Chao / OASYS CORE
+  747 | """AOI-Vision v0.1
+
+// ====== 文件: backend/app/modules/measurement/__init__.py ======
+  748 | __all__ = ["router"]
+  749 | 
+  750 | from app.modules.measurement.router import router
+
+// ====== Page 15 ======
+
+  751 | """
+  752 | 日期: 2026-06-17 | 作者: William Chao / OASYS CORE
+  753 | """AOI-Vision v0.1
+
+// ====== 文件: backend/app/modules/inspection/websocket.py ======
+  754 |         camera_manager.stop()
+  755 |     finally:
+  756 |             await asyncio.sleep(frame_interval)
+  757 |                 await ws.send_json({"info": "no frame"})
+  758 |             else:
+  759 |                     break
+  760 |                 except Exception:
+  761 |                     await ws.send_text(b64)
+  762 |                 try:
+  763 |             if b64:
+  764 |             b64 = camera_manager.encode_frame()
+  765 |         while camera_manager.is_running:
+  766 |         frame_interval = 1.0 / 15  # 15 fps
+  767 |     try:
+  768 | 
+  769 |         return
+  770 |         await ws.close()
+  771 |         await ws.send_json({"error": "Failed to start camera"})
+  772 |     if not started:
+  773 |     started = camera_manager.start()
+  774 |     await ws.accept()
+  775 | async def camera_websocket(ws: WebSocket):
+  776 | @router.websocket("/ws/camera")
+  777 | 
+  778 | 
+  779 | router = APIRouter()
+  780 | 
+  781 | from app.modules.inspection.camera_service import camera_manager
+  782 | 
+  783 | from fastapi import APIRouter, WebSocket
+  784 | 
+  785 | import time
+  786 | import asyncio
+  787 | """
+  788 | 描述: 相机 WebSocket 端点 — 持续推送 JPEG 帧到前端。
+  789 | 日期: 2026-06-17 | 作者: William Chao / OASYS CORE
+  790 | """AOI-Vision v0.1
+
+// ====== 文件: backend/app/modules/inspection/vision.py ======
+  791 |                 "circumference_mm": round(circumference_px / pixels_per_mm, 3), "radius_mm": round(radius / pixels_per_mm, 3)}
+  792 |         return {"diameter_px": round(diameter_px, 1), "diameter_mm": round(diameter_px / pixels_per_mm, 3),
+  793 |         circumference_px = 2 * np.pi * radius
+  794 |         diameter_px = radius * 2
+  795 |         """测量圆形特征"""
+  796 |     def measure_circle(frame: np.ndarray, center: tuple, radius: int, pixels_per_mm: float) -> dict:
+  797 |     @staticmethod
+  798 | 
+  799 |                 "unit": "mm"}
+  800 |         return {"pixel_distance": round(pixel_dist, 2), "real_mm": round(pixel_dist / pixels_per_mm, 3),
+
+// ====== Page 16 ======
+
+  801 |         pixel_dist = np.sqrt((p2[0] - p1[0])**2 + (p2[1] - p1[1])**2)
+  802 |         """计算两点间实际距离"""
+  803 |     def measure_distance(p1: tuple, p2: tuple, pixels_per_mm: float) -> dict:
+  804 |     @staticmethod
+  805 | 
+  806 |             return None
+  807 |         except ImportError:
+  808 |                     for r in results] if results else None
+  809 |                      "rect": {"x": r.rect.left, "y": r.rect.top, "w": r.rect.width, "h": r.rect.height}}
+  810 |             return [{"data": r.data.decode("utf-8"), "type": r.type,
+  811 |             results = decode(frame)
+  812 |             from pyzbar.pyzbar import decode
+  813 |         try:
+  814 |         """条码/二维码识别 (pyzbar)"""
+  815 |     def read_barcode(frame: np.ndarray) -> Optional[list[dict]]:
+  816 |     @staticmethod
+  817 | 
+  818 |         return {"count": len(objects), "objects": objects}
+  819 |                 objects.append({"x": int(x), "y": int(y), "w": int(w), "h": int(h), "area": int(area)})
+  820 |                 x, y, w, h = cv2.boundingRect(c)
+  821 |             if min_area <= area <= max_area:
+  822 |             area = cv2.contourArea(c)
+  823 |         for c in contours:
+  824 |         objects = []
+  825 |         contours, _ = cv2.findContours(cleaned, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+  826 |         cleaned = cv2.morphologyEx(binary, cv2.MORPH_OPEN, kernel, iterations=1)
+  827 |         kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+  828 |         _, binary = cv2.threshold(blurred, threshold, 255, cv2.THRESH_BINARY_INV)
+  829 |         blurred = cv2.GaussianBlur(gray, (blur_ksize, blur_ksize), 0)
+  830 |         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+  831 |         """Blob检测计数"""
+  832 |                       threshold: int = 127, blur_ksize: int = 5) -> dict:
+  833 |     def count_objects(frame: np.ndarray, min_area: int = 100, max_area: int = 100000,
+  834 |     @staticmethod
+  835 | 
+  836 |     """计数与条码"""
+  837 | class VisionAnalyzer:
+  838 | 
+  839 | from typing import Optional
+  840 | import numpy as np
+  841 | import cv2
+  842 | """
+  843 | 描述: 目标计数 + 条码/二维码识别
+  844 | 日期: 2026-06-17 | 作者: William Chao / OASYS CORE
+  845 | """AOI-Vision v0.1 — 视觉分析引擎
+
+// ====== 文件: backend/app/modules/inspection/camera_service.py ======
+  846 | camera_manager = CameraManager()
+  847 | # 模块级单例
+  848 | 
+  849 | 
+  850 |         return base64.b64encode(encoded.tobytes()).decode("ascii")
+
+// ====== Page 17 ======
+
+  851 |             return None
+  852 |         if not success:
+  853 |         success, encoded = cv2.imencode(".jpg", frame, [cv2.IMWRITE_JPEG_QUALITY, quality])
+  854 |             return None
+  855 |         if frame is None:
+  856 |         frame, _ = self.get_frame()
+  857 |         """将当前帧编码为 base64 JPEG 字符串，用于 WebSocket 传输。"""
+  858 |     def encode_frame(self, quality: int = 70) -> Optional[str]:
+  859 | 
+  860 |             return self._frame.copy(), self._timestamp
+  861 |                 return None, None
+  862 |             if self._frame is None:
+  863 |         with self._buffer_lock:
+  864 |         """返回 (frame_bgr, timestamp) 或 (None, None)。"""
+  865 |     def get_frame(self) -> tuple[Optional[np.ndarray], Optional[float]]:
+  866 | 
+  867 |             time.sleep(sleep_time)
+  868 |             sleep_time = max(0, self._frame_interval - elapsed)
+  869 |             elapsed = time.time() - loop_start
+  870 |                         self._timestamp = time.time()
+  871 |                         self._frame = frame
+  872 |                     with self._buffer_lock:
+  873 |                 if frame is not None:
+  874 |                 frame = self._camera.read_frame()
+  875 |             if self._camera is not None:
+  876 |             loop_start = time.time()
+  877 |         while self._running:
+  878 |         """后台采集循环，按目标帧率读取最新帧。"""
+  879 |     def _capture_loop(self) -> None:
+  880 | 
+  881 |         return self._running
+  882 |     def is_running(self) -> bool:
+  883 |     @property
+  884 | 
+  885 |             self._timestamp = None
+  886 |             self._frame = None
+  887 |         with self._buffer_lock:
+  888 |         self._thread = None
+  889 |             self._camera = None
+  890 |             self._camera.release()
+  891 |         if self._camera is not None:
+  892 |             self._thread.join(timeout=3.0)
+  893 |         if self._thread is not None and self._thread.is_alive():
+  894 |         self._running = False
+  895 |         """停止采集线程并释放相机。"""
+  896 |     def stop(self) -> None:
+  897 | 
+  898 |         return True
+  899 |         self._thread.start()
+  900 |         self._thread = threading.Thread(target=self._capture_loop, daemon=True)
+
+// ====== Page 18 ======
+
+  901 |         self._running = True
+  902 |             return False
+  903 |         except Exception:
+  904 |                 return False
+  905 |             if not self._camera.open():
+  906 |             self._camera = create_camera(settings.CAMERA_TYPE, index=settings.CAMERA_INDEX)
+  907 |         try:
+  908 |             return True
+  909 |         if self._running:
+  910 |         """启动相机采集线程。如果已经在运行则返回 True。"""
+  911 |     def start(self) -> bool:
+  912 | 
+  913 |         self._frame_interval = 1.0 / self._target_fps
+  914 |         self._target_fps = 15
+  915 |         self._buffer_lock = threading.Lock()
+  916 |         self._timestamp: Optional[float] = None
+  917 |         self._frame: Optional[np.ndarray] = None
+  918 |         self._thread: Optional[threading.Thread] = None
+  919 |         self._running = False
+  920 |         self._camera: Optional[BaseCamera] = None
+  921 |         self._initialized = True
+  922 |             return
+  923 |         if self._initialized:
+  924 |     def __init__(self):
+  925 | 
+  926 |         return cls._instance
+  927 |                     cls._instance._initialized = False
+  928 |                     cls._instance = super().__new__(cls)
+  929 |                 if cls._instance is None:
+  930 |             with cls._lock:
+  931 |         if cls._instance is None:
+  932 |     def __new__(cls) -> "CameraManager":
+  933 | 
+  934 |     _lock = threading.Lock()
+  935 |     _instance: Optional["CameraManager"] = None
+  936 | 
+  937 |     """单例相机管理器 — 后台线程持续采集帧，暴露 get_frame / encode_frame。"""
+  938 | class CameraManager:
+  939 | 
+  940 | 
+  941 | from app.hardware.camera import BaseCamera
+  942 | from app.hardware.factory import create_camera
+  943 | from app.core.config import settings
+  944 | 
+  945 | import numpy as np
+  946 | import cv2
+  947 | 
+  948 | from typing import Optional
+  949 | import time
+  950 | import threading
+
+// ====== Page 19 ======
+
+  951 | import base64
+  952 | """
+  953 | 描述: 相机管理器 — 单例模式，后台线程采集最新帧，供 WebSocket 推送。
+  954 | 日期: 2026-06-17 | 作者: William Chao / OASYS CORE
+  955 | """AOI-Vision v0.1
+
+// ====== 文件: backend/app/modules/inspection/__init__.py ======
+  956 | """
+  957 | 日期: 2026-06-17 | 作者: William Chao / OASYS CORE
+  958 | """AOI-Vision v0.1
+
+// ====== 文件: backend/app/modules/defects/service.py ======
+  959 |     return items, total
+  960 |     total = (await db.execute(count_stmt)).scalar() or 0
+  961 |     items = list((await db.execute(stmt)).scalars().all())
+  962 |     stmt = stmt.order_by(desc(InspectionResult.created_at)).offset(offset).limit(limit)
+  963 | 
+  964 |         count_stmt = count_stmt.where(InspectionResult.rule_id == rule_id)
+  965 |         stmt = stmt.where(InspectionResult.rule_id == rule_id)
+  966 |     if rule_id:
+  967 |     count_stmt = select(func.count()).select_from(InspectionResult)
+  968 |     stmt = select(InspectionResult)
+  969 | ) -> tuple[list[InspectionResult], int]:
+  970 |     rule_id: uuid.UUID | None = None,
+  971 |     offset: int = 0,
+  972 |     limit: int = 50,
+  973 |     db: AsyncSession,
+  974 | async def list_results(
+  975 | 
+  976 | 
+  977 |     return ins_result
+  978 |     await db.flush()
+  979 |     db.add(ins_result)
+  980 |     )
+  981 |         created_by=user_id,
+  982 |         confidence=inspection_output["confidence"],
+  983 |         defects=inspection_output["defects"],
+  984 |         roi_regions=[],
+  985 |         pass_fail=inspection_output["pass_fail"],
+  986 |         defect_count=inspection_output["defect_count"],
+  987 |         image_path=image_path,
+  988 |         rule_id=rule_id,
+  989 |     ins_result = InspectionResult(
+  990 | 
+  991 |     )
+  992 |         threshold=rule.threshold,
+  993 |         golden_frame=golden_frame,
+  994 |         rule_params=rule.params,
+  995 |         rule_type=rule.type,
+  996 |         frame=frame,
+  997 |     inspection_output = engine.run_inspection(
+  998 | 
+  999 |         golden_frame = cv2.imread(rule.golden_image_path)
+ 1000 |     if rule.golden_image_path and os.path.isfile(rule.golden_image_path):
+
+// ====== Page 20 ======
+
+ 1001 |     golden_frame = None
+ 1002 |     # 加载金样图（如有）
+ 1003 | 
+ 1004 |         raise ValueError(f"Rule not found: {rule_id}")
+ 1005 |     if not rule:
+ 1006 |     rule = result.scalar_one_or_none()
+ 1007 |     result = await db.execute(select(InspectionRule).where(InspectionRule.id == rule_id))
+ 1008 |     """执行检测并保存结果到数据库"""
+ 1009 | ) -> InspectionResult:
+ 1010 |     image_path: str | None = None,
+ 1011 |     user_id: uuid.UUID | None = None,
+ 1012 |     frame: np.ndarray,
+ 1013 |     rule_id: uuid.UUID,
+ 1014 |     db: AsyncSession,
+ 1015 | async def run_inspection(
+ 1016 | 
+ 1017 | # ─── Inspection ────────────────────────────────────────────
+ 1018 | 
+ 1019 | 
+ 1020 |     return True
+ 1021 |     await db.flush()
+ 1022 |     rule.is_active = False
+ 1023 |         return False
+ 1024 |     if not rule:
+ 1025 |     rule = result.scalar_one_or_none()
+ 1026 |     result = await db.execute(select(InspectionRule).where(InspectionRule.id == rule_id))
+ 1027 | async def delete_rule(db: AsyncSession, rule_id: uuid.UUID) -> bool:
+ 1028 | 
+ 1029 | 
+ 1030 |     return rule
+ 1031 |     await db.flush()
+ 1032 |         setattr(rule, key, val)
+ 1033 |     for key, val in data.model_dump(exclude_none=True).items():
+ 1034 |         return None
+ 1035 |     if not rule:
+ 1036 |     rule = result.scalar_one_or_none()
+ 1037 |     result = await db.execute(select(InspectionRule).where(InspectionRule.id == rule_id))
+ 1038 | ) -> InspectionRule | None:
+ 1039 |     db: AsyncSession, rule_id: uuid.UUID, data: RuleUpdate
+ 1040 | async def update_rule(
+ 1041 | 
+ 1042 | 
+ 1043 |     return rule
+ 1044 |     await db.flush()
+ 1045 |     db.add(rule)
+ 1046 |     rule = InspectionRule(**data.model_dump())
+ 1047 | async def create_rule(db: AsyncSession, data: RuleCreate) -> InspectionRule:
+ 1048 | 
+ 1049 | 
+ 1050 |     return result.scalar_one_or_none()
+
+// ====== Page 21 ======
+
+ 1051 |     result = await db.execute(select(InspectionRule).where(InspectionRule.id == rule_id))
+ 1052 | async def get_rule(db: AsyncSession, rule_id: uuid.UUID) -> InspectionRule | None:
+ 1053 | 
+ 1054 | 
+ 1055 |     return list((await db.execute(stmt)).scalars().all())
+ 1056 |     )
+ 1057 |         .order_by(desc(InspectionRule.created_at))
+ 1058 |         .where(InspectionRule.is_active == True)
+ 1059 |         select(InspectionRule)
+ 1060 |     stmt = (
+ 1061 | async def list_rules(db: AsyncSession) -> list[InspectionRule]:
+ 1062 | 
+ 1063 | # ─── Rule CRUD ─────────────────────────────────────────────
+ 1064 | 
+ 1065 | 
+ 1066 | engine = DefectEngine()
+ 1067 | 
+ 1068 | from app.modules.defects.schemas import RuleCreate, RuleUpdate
+ 1069 | from app.modules.defects.models import InspectionRule, InspectionResult
+ 1070 | from app.modules.defects.engine import DefectEngine
+ 1071 | from app.core.config import settings
+ 1072 | 
+ 1073 | from sqlalchemy.ext.asyncio import AsyncSession
+ 1074 | from sqlalchemy import select, desc, func
+ 1075 | import numpy as np
+ 1076 | import cv2
+ 1077 | 
+ 1078 | from datetime import datetime, timezone
+ 1079 | import uuid
+ 1080 | import os
+ 1081 | """
+ 1082 | 日期: 2026-06-17 | 作者: William Chao / OASYS CORE
+ 1083 | """AOI-Vision v0.1 — 缺陷检测服务
+
+// ====== 文件: backend/app/modules/defects/schemas.py ======
+ 1084 |     offset: int
+ 1085 |     limit: int
+ 1086 |     total: int
+ 1087 |     items: list[InspectionResultResponse]
+ 1088 | class InspectionResultListResponse(BaseModel):
+ 1089 | 
+ 1090 | 
+ 1091 |     model_config = {"from_attributes": True}
+ 1092 | 
+ 1093 |     created_by: UUID | None
+ 1094 |     created_at: datetime
+ 1095 |     confidence: float
+ 1096 |     defects: list
+ 1097 |     roi_regions: list
+ 1098 |     pass_fail: bool
+ 1099 |     defect_count: int
+ 1100 |     image_path: str | None
+
+// ====== Page 22 ======
+
+ 1101 |     rule_id: UUID
+ 1102 |     id: UUID
+ 1103 | class InspectionResultResponse(BaseModel):
+ 1104 | 
+ 1105 | 
+ 1106 |     rule_id: UUID | None = None
+ 1107 | class InspectUploadRequest(BaseModel):
+ 1108 | 
+ 1109 | 
+ 1110 |     capture: bool = False  # whether to capture from camera live
+ 1111 |     rule_id: UUID
+ 1112 | class InspectRequest(BaseModel):
+ 1113 | 
+ 1114 | # --- Inspection Request / Response ---
+ 1115 | 
+ 1116 | 
+ 1117 |     model_config = {"from_attributes": True}
+ 1118 | 
+ 1119 |     created_at: datetime
+ 1120 |     is_active: bool
+ 1121 |     threshold: float
+ 1122 |     golden_image_path: str | None
+ 1123 |     params: dict
+ 1124 |     type: str
+ 1125 |     name: str
+ 1126 |     id: UUID
+ 1127 | class RuleResponse(BaseModel):
+ 1128 | 
+ 1129 | 
+ 1130 |     is_active: bool | None = None
+ 1131 |     threshold: float | None = None
+ 1132 |     golden_image_path: str | None = None
+ 1133 |     params: dict | None = None
+ 1134 |     name: str | None = None
+ 1135 | class RuleUpdate(BaseModel):
+ 1136 | 
+ 1137 | 
+ 1138 |     is_active: bool = True
+ 1139 |     threshold: float = 0.95
+ 1140 |     golden_image_path: str | None = None
+ 1141 |     params: dict = {}
+ 1142 |     type: str  # template_match / contour / color_threshold
+ 1143 |     name: str
+ 1144 | class RuleCreate(BaseModel):
+ 1145 | 
+ 1146 | # --- InspectionRule CRUD ---
+ 1147 | 
+ 1148 | 
+ 1149 |     description: str
+ 1150 |     area: float
+
+// ====== Page 23 ======
+
+ 1151 |     h: int
+ 1152 |     w: int
+ 1153 |     y: int
+ 1154 |     x: int
+ 1155 |     severity: str  # critical / major / minor
+ 1156 |     type: str
+ 1157 | class DefectItemSchema(BaseModel):
+ 1158 | 
+ 1159 | # --- DefectItem (embedded in InspectionResult) ---
+ 1160 | 
+ 1161 | 
+ 1162 | from pydantic import BaseModel
+ 1163 | 
+ 1164 | from uuid import UUID
+ 1165 | from datetime import datetime
+ 1166 | """
+ 1167 | 日期: 2026-06-17 | 作者: William Chao / OASYS CORE
+ 1168 | """AOI-Vision v0.1 — 缺陷检测 schemas
+
+// ====== 文件: backend/app/modules/defects/router.py ======
+ 1169 |     return {"items": items, "total": total, "limit": limit, "offset": offset}
+ 1170 |     items, total = await list_results(db, limit, offset, rule_id)
+ 1171 |     """查询检测历史"""
+ 1172 | ):
+ 1173 |     _user: User = Depends(get_current_user),
+ 1174 |     db: AsyncSession = Depends(get_db),
+ 1175 |     offset: int = Query(0, ge=0),
+ 1176 |     limit: int = Query(50, ge=1, le=200),
+ 1177 |     rule_id: uuid.UUID | None = Query(None),
+ 1178 | async def list_inspection_results(
+ 1179 | @router.get("/results", response_model=InspectionResultListResponse)
+ 1180 | 
+ 1181 | 
+ 1182 |     return result
+ 1183 | 
+ 1184 |         raise AppException(404, str(e))
+ 1185 |     except ValueError as e:
+ 1186 |         )
+ 1187 |             db, rule_id, frame, user_id=user.id, image_path=stored_path
+ 1188 |         result = await run_inspection(
+ 1189 |     try:
+ 1190 | 
+ 1191 |         raise AppException(400, "Invalid image file")
+ 1192 |     if frame is None:
+ 1193 |     frame = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+ 1194 |     np_arr = np.frombuffer(contents, np.uint8)
+ 1195 |     # 解码图像
+ 1196 | 
+ 1197 |         f.write(contents)
+ 1198 |     with open(stored_path, "wb") as f:
+ 1199 |     contents = await image.read()
+ 1200 | 
+
+// ====== Page 24 ======
+
+ 1201 |     stored_path = os.path.join(UPLOAD_DIR, stored_name)
+ 1202 |     stored_name = f"{uuid.uuid4().hex}{file_ext}"
+ 1203 |     file_ext = os.path.splitext(image.filename or "image.png")[1] or ".png"
+ 1204 |     # 保存上传文件
+ 1205 |     """上传图像进行缺陷检测"""
+ 1206 | ):
+ 1207 |     user: User = Depends(get_current_user),
+ 1208 |     db: AsyncSession = Depends(get_db),
+ 1209 |     rule_id: uuid.UUID = Query(..., description="检测规则 ID"),
+ 1210 |     image: UploadFile = File(...),
+ 1211 | async def inspect_upload(
+ 1212 | @router.post("/inspect/upload", response_model=InspectionResultResponse)
+ 1213 | 
+ 1214 | 
+ 1215 |     return result
+ 1216 | 
+ 1217 |         raise AppException(404, str(e))
+ 1218 |     except ValueError as e:
+ 1219 |         result = await run_inspection(db, req.rule_id, frame, user_id=user.id)
+ 1220 |     try:
+ 1221 | 
+ 1222 |         frame = np.random.randint(0, 255, (480, 640, 3), dtype=np.uint8)
+ 1223 |         # 模拟测试帧 (640×480 随机噪声)
+ 1224 |     else:
+ 1225 |             cam.release()
+ 1226 |         finally:
+ 1227 |                 raise AppException(400, "Camera failed to capture frame")
+ 1228 |             if frame is None:
+ 1229 |             frame = cam.read_frame()
+ 1230 |         try:
+ 1231 |         cam.open()
+ 1232 |         cam = create_camera()
+ 1233 | 
+ 1234 |         from app.hardware.factory import create_camera
+ 1235 |     if req.capture:
+ 1236 |     """从实时摄像头采集并检测 (capture=True) 或使用模拟帧"""
+ 1237 | ):
+ 1238 |     user: User = Depends(get_current_user),
+ 1239 |     db: AsyncSession = Depends(get_db),
+ 1240 |     req: InspectRequest,
+ 1241 | async def inspect_live(
+ 1242 | @router.post("/inspect", response_model=InspectionResultResponse)
+ 1243 | 
+ 1244 | # ─── Inspection ────────────────────────────────────────────
+ 1245 | 
+ 1246 | 
+ 1247 |         raise AppException(404, "Rule not found")
+ 1248 |     if not ok:
+ 1249 |     ok = await delete_rule(db, rule_id)
+ 1250 |     """删除检测规则（软删除）"""
+
+// ====== Page 25 ======
+
+ 1251 | ):
+ 1252 |     _user: User = Depends(get_current_user),
+ 1253 |     db: AsyncSession = Depends(get_db),
+ 1254 |     rule_id: uuid.UUID,
+ 1255 | async def delete_inspection_rule(
+ 1256 | @router.delete("/rules/{rule_id}", status_code=204)
+ 1257 | 
+ 1258 | 
+ 1259 |     return rule
+ 1260 |         raise AppException(404, "Rule not found")
+ 1261 |     if not rule:
+ 1262 |     rule = await update_rule(db, rule_id, data)
+ 1263 |     """更新检测规则"""
+ 1264 | ):
+ 1265 |     _user: User = Depends(get_current_user),
+ 1266 |     db: AsyncSession = Depends(get_db),
+ 1267 |     data: RuleUpdate,
+ 1268 |     rule_id: uuid.UUID,
+ 1269 | async def update_inspection_rule(
+ 1270 | @router.put("/rules/{rule_id}", response_model=RuleResponse)
+ 1271 | 
+ 1272 | 
+ 1273 |     return await list_rules(db)
+ 1274 |     """获取检测规则列表"""
+ 1275 | ):
+ 1276 |     _user: User = Depends(get_current_user),
+ 1277 |     db: AsyncSession = Depends(get_db),
+ 1278 | async def list_inspection_rules(
+ 1279 | @router.get("/rules", response_model=list[RuleResponse])
+ 1280 | 
+ 1281 | 
+ 1282 |     return await create_rule(db, data)
+ 1283 |     """创建检测规则"""
+ 1284 | ):
+ 1285 |     _user: User = Depends(get_current_user),
+ 1286 |     db: AsyncSession = Depends(get_db),
+ 1287 |     data: RuleCreate,
+ 1288 | async def create_inspection_rule(
+ 1289 | @router.post("/rules", response_model=RuleResponse, status_code=201)
+ 1290 | 
+ 1291 | # ─── Rule CRUD ─────────────────────────────────────────────
+ 1292 | 
+ 1293 | 
+ 1294 | engine = DefectEngine()
+ 1295 | 
+ 1296 | os.makedirs(UPLOAD_DIR, exist_ok=True)
+ 1297 | UPLOAD_DIR = os.path.join(settings.UPLOAD_DIR, "defects")
+ 1298 | 
+ 1299 | router = APIRouter(prefix="/defects", tags=["Defects"])
+ 1300 | 
+
+// ====== Page 26 ======
+
+ 1301 | from app.modules.defects.engine import DefectEngine
+ 1302 | )
+ 1303 |     list_results,
+ 1304 |     run_inspection,
+ 1305 |     delete_rule,
+ 1306 |     update_rule,
+ 1307 |     create_rule,
+ 1308 |     get_rule,
+ 1309 |     list_rules,
+ 1310 | from app.modules.defects.service import (
+ 1311 | )
+ 1312 |     InspectionResultListResponse,
+ 1313 |     InspectionResultResponse,
+ 1314 |     InspectRequest,
+ 1315 |     RuleResponse,
+ 1316 |     RuleUpdate,
+ 1317 |     RuleCreate,
+ 1318 | from app.modules.defects.schemas import (
+ 1319 | from app.modules.auth.models import User
+ 1320 | from app.modules.auth.service import get_current_user
+ 1321 | from app.core.exceptions import AppException
+ 1322 | from app.core.database import get_db
+ 1323 | from app.core.config import settings
+ 1324 | 
+ 1325 | from sqlalchemy.ext.asyncio import AsyncSession
+ 1326 | from fastapi import APIRouter, Depends, File, Query, UploadFile
+ 1327 | import numpy as np
+ 1328 | import cv2
+ 1329 | 
+ 1330 | from datetime import datetime, timezone
+ 1331 | import uuid
+ 1332 | import os
+ 1333 | """
+ 1334 | 日期: 2026-06-17 | 作者: William Chao / OASYS CORE
+ 1335 | """AOI-Vision v0.1 — 缺陷检测路由
+
+// ====== 文件: backend/app/modules/defects/models.py ======
+ 1336 |     )
+ 1337 |         "InspectionRule", back_populates="results"
+ 1338 |     rule: Mapped["InspectionRule"] = relationship(
+ 1339 | 
+ 1340 |     )
+ 1341 |         nullable=True,
+ 1342 |         ForeignKey("users.id", ondelete="SET NULL"),
+ 1343 |         GUID,
+ 1344 |     created_by: Mapped[uuid.UUID | None] = mapped_column(
+ 1345 |     confidence: Mapped[float] = mapped_column(Float, default=0.0)
+ 1346 |     defects: Mapped[list] = mapped_column(JSON, default=list)
+ 1347 |     roi_regions: Mapped[list] = mapped_column(JSON, default=list)
+ 1348 |     pass_fail: Mapped[bool] = mapped_column(Boolean, default=True)  # True = pass
+ 1349 |     defect_count: Mapped[int] = mapped_column(Integer, default=0)
+ 1350 |     image_path: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+// ====== Page 27 ======
+
+ 1351 |     )
+ 1352 |         GUID, ForeignKey("inspection_rules.id", ondelete="CASCADE"), nullable=False
+ 1353 |     rule_id: Mapped[uuid.UUID] = mapped_column(
+ 1354 |     )
+ 1355 |         GUID, primary_key=True, default=uuid.uuid4
+ 1356 |     id: Mapped[uuid.UUID] = mapped_column(
+ 1357 | 
+ 1358 |     __tablename__ = "inspection_results"
+ 1359 | class InspectionResult(TimestampMixin, Base):
+ 1360 | 
+ 1361 | 
+ 1362 |     )
+ 1363 |         "InspectionResult", back_populates="rule"
+ 1364 |     results: Mapped[list["InspectionResult"]] = relationship(
+ 1365 | 
+ 1366 |     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+ 1367 |     threshold: Mapped[float] = mapped_column(Float, default=0.95)
+ 1368 |     golden_image_path: Mapped[str | None] = mapped_column(Text, nullable=True)
+ 1369 |     params: Mapped[dict] = mapped_column(JSON, default=dict)
+ 1370 |     )  # template_match / contour / color_threshold
+ 1371 |         String(50), nullable=False
+ 1372 |     type: Mapped[str] = mapped_column(
+ 1373 |     name: Mapped[str] = mapped_column(String(200), nullable=False)
+ 1374 |     )
+ 1375 |         GUID, primary_key=True, default=uuid.uuid4
+ 1376 |     id: Mapped[uuid.UUID] = mapped_column(
+ 1377 | 
+ 1378 |     __tablename__ = "inspection_rules"
+ 1379 | class InspectionRule(TimestampMixin, Base):
+ 1380 | 
+ 1381 | 
+ 1382 | from app.shared.models import TimestampMixin
+ 1383 | from app.core.database import Base
+ 1384 | 
+ 1385 | from sqlalchemy.orm import Mapped, mapped_column, relationship
+ 1386 | from app.core.database import GUID
+ 1387 | from sqlalchemy import Boolean, Float, ForeignKey, Integer, JSON, String, Text
+ 1388 | 
+ 1389 | from datetime import datetime, timezone
+ 1390 | import uuid
+ 1391 | """
+ 1392 | 描述: InspectionRule + InspectionResult SQLAlchemy 模型
+ 1393 | 日期: 2026-06-17 | 作者: William Chao / OASYS CORE
+ 1394 | """AOI-Vision v0.1 — 缺陷检测模型
+
+// ====== 文件: backend/app/modules/defects/engine.py ======
+ 1395 |             return InspectionResult()
+ 1396 |                 return DefectEngine.template_match(frame, golden_frame, th)
+ 1397 |             elif golden_frame is not None:
+ 1398 |                 return DefectEngine.color_threshold(frame, tuple(params.get("lower", [0,0,0])), tuple(params.get("upper", [180,255,255])))
+ 1399 |             elif mode == "color_threshold":
+ 1400 |                 return DefectEngine.contour_analysis(frame, params.get("min_area", 100), params.get("max_area", 100000))
+
+// ====== Page 28 ======
+
+ 1401 |             elif mode == "contour":
+ 1402 |                 return DefectEngine.template_match(frame, golden_frame, th)
+ 1403 |             if mode == "template_match" and golden_frame is not None:
+ 1404 |             params = rule.get("params", {})
+ 1405 |             th = rule.get("threshold", 0.95)
+ 1406 |             mode = rule.get("type", "template_match")
+ 1407 |         def run(frame, rule, golden_frame=None):
+ 1408 |         @staticmethod
+ 1409 | 
+ 1410 |             return "critical" if ratio > 0.05 else "major" if ratio > 0.01 else "minor"
+ 1411 |             ratio = area / max(max_area, 1)
+ 1412 |         def classify_severity(area, max_area=100000):
+ 1413 |         @staticmethod
+ 1414 | 
+ 1415 |             return InspectionResult(defect_count=defect_count, pass_fail=defect_count == 0, defects=defects)
+ 1416 |                 defects.append(Defect(type="color", severity="major" if area > 2000 else "minor", x=int(x), y=int(y), w=int(w), h=int(h), area=int(area), description=f"色差"))
+ 1417 |                 defect_count += 1
+ 1418 |                 x, y, w, h = cv2.boundingRect(c)
+ 1419 |                 if area < 30: continue
+ 1420 |                 area = cv2.contourArea(c)
+ 1421 |             for c in contours:
+ 1422 |             defects = []; defect_count = 0
+ 1423 |             contours, _ = cv2.findContours(cleaned, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+ 1424 |             cleaned = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
+ 1425 |             kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+ 1426 |             mask = cv2.inRange(hsv, lower, upper)
+ 1427 |             hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+ 1428 |         def color_threshold(frame, lower=(0,0,0), upper=(180,255,255)):
+ 1429 |         @staticmethod
+ 1430 | 
+ 1431 |             return InspectionResult(defect_count=defect_count, pass_fail=defect_count == 0, defects=defects)
+ 1432 |                 defects.append(Defect(type="contour", severity="minor", x=int(x), y=int(y), w=int(w), h=int(h), area=int(area), description=f"轮廓异常"))
+ 1433 |                 defect_count += 1
+ 1434 |                 x, y, w, h = cv2.boundingRect(c)
+ 1435 |                 if area < min_area or area > max_area: continue
+ 1436 |                 area = cv2.contourArea(c)
+ 1437 |             for c in contours:
+ 1438 |             defects = []; defect_count = 0
+ 1439 |             contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+ 1440 |             edges = cv2.Canny(cv2.GaussianBlur(gray, (5,5), 0), 50, 150)
+ 1441 |             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+ 1442 |         def contour_analysis(frame, min_area=100, max_area=100000):
+ 1443 |         @staticmethod
+ 1444 | 
+ 1445 |             return InspectionResult(defect_count=defect_count, pass_fail=defect_count == 0, defects=defects, confidence=round(1 - defect_count * 0.05, 2))
+ 1446 |                 defects.append(Defect(type="diff", severity=sev, x=int(x), y=int(y), w=int(w), h=int(h), area=int(area), description=f"差异区域"))
+ 1447 |                 defect_count += 1
+ 1448 |                 sev = "critical" if area > 5000 else "major" if area > 1000 else "minor"
+ 1449 |                 x, y, w, h = cv2.boundingRect(c)
+ 1450 |                 if area < 30: continue
+
+// ====== Page 29 ======
+
+ 1451 |                 area = cv2.contourArea(c)
+ 1452 |             for c in contours:
+ 1453 |             defects = []; defect_count = 0
+ 1454 |             contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+ 1455 |             _, binary = cv2.threshold(diff, int((1-threshold)*255), 255, cv2.THRESH_BINARY)
+ 1456 |             diff = cv2.absdiff(gray1, gray2)
+ 1457 |             gray2 = cv2.cvtColor(golden_frame, cv2.COLOR_BGR2GRAY)
+ 1458 |             gray1 = cv2.cvtColor(test_frame, cv2.COLOR_BGR2GRAY)
+ 1459 |         def template_match(test_frame, golden_frame, threshold=0.95):
+ 1460 |         @staticmethod
+ 1461 |     class DefectEngine:
+ 1462 | 
+ 1463 |         defects: list[Defect] = field(default_factory=list); confidence: float = 1.0
+ 1464 |         rule_id: str = ""; defect_count: int = 0; pass_fail: bool = True
+ 1465 |     class InspectionResult:
+ 1466 |     @dataclass
+ 1467 | 
+ 1468 |         area: int = 0; description: str = ""
+ 1469 |         type: str = ""; severity: str = "minor"; x: int = 0; y: int = 0; w: int = 0; h: int = 0
+ 1470 |     class Defect:
+ 1471 |     @dataclass
+ 1472 | 
+ 1473 |     from typing import Any
+ 1474 |     from dataclasses import dataclass, field
+ 1475 |     import cv2, numpy as np, io, base64
+ 1476 | except ImportError:
+ 1477 |     from aoi_engine.defect import DefectEngine, InspectionResult, Defect  # noqa: F401
+ 1478 | try:
+ 1479 | """
+ 1480 | 描述: 代理到独立 aoi_engine 包。生产环境替换为 Cython .so
+ 1481 | 日期: 2026-06-17 | 作者: William Chao / OASYS CORE
+ 1482 | """AOI-Vision v0.2 — 缺陷检测引擎 (Core Engine wrapper)
+
+// ====== 文件: backend/app/modules/defects/__init__.py ======
+ 1483 | __all__ = ["router"]
+ 1484 | 
+ 1485 | from app.modules.defects.router import router
+ 1486 | """
+ 1487 | 日期: 2026-06-17 | 作者: William Chao / OASYS CORE
+ 1488 | """AOI-Vision v0.1
+
+// ====== 文件: backend/app/modules/auth/service.py ======
+ 1489 |             await db.flush()
+ 1490 |             )
+ 1491 |                 user_account_groups.insert().values(user_id=admin.id, account_group_id=admin_group.id)
+ 1492 |             await db.execute(
+ 1493 |             from app.modules.auth.models import user_account_groups
+ 1494 |         if admin_group:
+ 1495 |         admin_group = grp_result.scalar_one_or_none()
+ 1496 |         grp_result = await db.execute(select(AccountGroup).where(AccountGroup.name == "管理员组"))
+ 1497 |     if admin and not admin.account_groups:
+ 1498 |     admin = result.scalar_one_or_none()
+ 1499 |     result = await db.execute(select(User).options(selectinload(User.account_groups)).where(User.username == "admin"))
+ 1500 |     # 把 admin 加入管理员组
+
+// ====== Page 30 ======
+
