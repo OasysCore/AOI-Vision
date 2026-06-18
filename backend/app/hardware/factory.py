@@ -2,7 +2,7 @@
 日期: 2026-06-17 | 作者: William Chao / OASYS CORE
 描述: 根据配置创建相机和网关实例。
       换硬件只改 config，不碰业务代码。
-      驱动模块懒加载——没有 opencv 时抽象层仍可 import。
+      驱动模块懒加载——没有 OasysCoreCV 时抽象层仍可 import。
 """
 from typing import Type
 from app.hardware.camera import BaseCamera

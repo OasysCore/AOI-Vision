@@ -10,7 +10,7 @@ from app.hardware.camera import BaseCamera, CameraProperties
 
 
 class UVCCamera(BaseCamera):
-    """通用 USB 相机 — 基于 OpenCV VideoCapture"""
+    """通用 USB 相机 — 基于 OasysCoreCV VideoCapture"""
 
     def __init__(self):
         self._cap: Optional[cv2.VideoCapture] = None

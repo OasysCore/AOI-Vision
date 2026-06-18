@@ -1,6 +1,6 @@
 """Core Engine: 缺陷检测
 日期: 2026-06-17 | 作者: William Chao / OASYS CORE
-描述: 8 种 OpenCV 检测模式，独立于业务层。
+描述: 8 种 OasysCoreCV 检测模式，独立于业务层。
 """
 import cv2
 import numpy as np

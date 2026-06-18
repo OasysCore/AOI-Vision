@@ -16,11 +16,11 @@
 │               Business Layer (业务层)             │
 │  backend/app/ — FastAPI + SQLAlchemy             │
 │  Auth / RBAC / CRUD / 报表 / 审计 / 设备管理       │
-│  不含任何 OpenCV/numpy 算法代码                    │
+│  不含任何 OasysCoreCV/numpy 算法代码                    │
 ├─────────────────────────────────────────────────┤
 │              Core Engine (核心层)                 │
 │  aoi_engine/ — 独立 Python 包                     │
-│  所有 OpenCV 算法 • ModuleRegistry 模块选装        │
+│  所有 OasysCoreCV 算法 • ModuleRegistry 模块选装        │
 │  发布时 Cython 编译 .so — 不可逆，不可读            │
 └─────────────────────────────────────────────────┘
 ```
@@ -32,7 +32,7 @@
 3. **发布时**: 删除 `.py` 源文件，只保留 `.so` + `setup.py`
 4. **gRPC 通道**: 生产部署时业务层通过 gRPC 调用核心层（独立进程）
 
-## 三、OpenCV 模块清单 (17个)
+## 三、OasysCoreCV 模块清单 (17个)
 
 ### 检测类 (Detection) — 6 模块
 
@@ -92,7 +92,7 @@ GET  /admin/engine-modules/config   → 导出当前配置快照
 | 专业版 | + feature_match + morphology_tophat + image_registration + barcode_reader | 8 模块，多数产线 |
 | 企业版 | 全部 17 模块 | 全功能 |
 
-## 五、OpenCV 技术优势
+## 五、OasysCoreCV 技术优势
 
 - **C++ 内核**: SIMD/NEON/OpenCL 硬件加速，单帧推理 <10ms
 - **DNN 模块**: 原生加载 ONNX/TensorFlow/PyTorch 模型，无需额外推理框架

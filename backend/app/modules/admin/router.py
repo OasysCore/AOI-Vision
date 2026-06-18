@@ -37,7 +37,7 @@ async def remove_option(opt_id: int, db: AsyncSession = Depends(get_db), _admin=
 
 @router.get("/engine-modules")
 async def get_modules(_user=Depends(get_current_user)):
-    """查看所有 OpenCV 模块及启用状态"""
+    """查看所有 OasysCoreCV 模块及启用状态"""
     from aoi_engine import registry
     return registry.get_config()
 

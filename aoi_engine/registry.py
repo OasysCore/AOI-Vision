@@ -1,4 +1,4 @@
-"""Core Engine: 模块注册表 — 管理所有 OpenCV 模块的启用/禁用
+"""Core Engine: 模块注册表 — 管理所有 OasysCoreCV 模块的启用/禁用
 日期: 2026-06-17 | 作者: William Chao / OASYS CORE
 描述: 零依赖纯 Python 注册表。业务层通过 API 控制开关。
       发布时 Cython 编译 .so — 即使服务器被黑也看不到算法逻辑。
@@ -66,7 +66,7 @@ ALL_MODULES: list[EngineModule] = [
 
     # ── DNN 推理 ──
     EngineModule(key="dnn_inference", name="DNN 深度学习推理", category="vision",
-        description="OpenCV DNN 模块加载 ONNX/TensorFlow/PyTorch 模型。YOLO/MobileNet/ResNet 端侧推理。",
+        description="OasysCoreCV DNN 模块加载 ONNX/TensorFlow/PyTorch 模型。YOLO/MobileNet/ResNet 端侧推理。",
         level="enterprise"),
     EngineModule(key="object_counting", name="目标计数", category="vision",
         description="Blob分析+轮廓计数。零件计数、焊点计数、颗粒计数。",
@@ -77,13 +77,13 @@ ALL_MODULES: list[EngineModule] = [
 
     # ── 拼接 ──
     EngineModule(key="image_stitching", name="全景拼接", category="vision",
-        description="OpenCV Stitcher。大尺寸PCB/晶圆多图拼接。超大工件检测必备。",
+        description="OasysCoreCV Stitcher。大尺寸PCB/晶圆多图拼接。超大工件检测必备。",
         level="enterprise"),
 ]
 
 
 class ModuleRegistry:
-    """OpenCV 模块注册表 — 单例
+    """OasysCoreCV 模块注册表 — 单例
     
     Usage:
       reg = ModuleRegistry()

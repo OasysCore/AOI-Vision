@@ -1,7 +1,7 @@
 """AOI Engine — 视觉核心引擎 (独立包)
 ========================================
 日期: 2026-06-17 | 作者: William Chao / OASYS CORE
-描述: 所有 OpenCV 算法在此包内，与业务层/UI层零耦合。
+描述: 所有 OasysCoreCV 算法在此包内，与业务层/UI层零耦合。
       可独立于 FastAPI 运行。SysAdmin 可通过 ModuleRegistry 按客户需求打包。
       发布时用 Cython 编译为 .so，保护核心算法。
 

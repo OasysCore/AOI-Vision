@@ -2,11 +2,11 @@
 
 > **For Hermes:** Use subagent-driven-development skill to implement this plan task-by-task.
 
-**Goal:** 构建一套基于 Web 的自动化光学检测 (AOI) 系统，连接工业显微镜摄像头，通过 OpenCV 实现缺陷检测、计数、量测，含账号权限管理、参数枚举、审计日志等完整企业级功能。
+**Goal:** 构建一套基于 Web 的自动化光学检测 (AOI) 系统，连接工业显微镜摄像头，通过 OasysCoreCV 实现缺陷检测、计数、量测，含账号权限管理、参数枚举、审计日志等完整企业级功能。
 
-**Architecture:** FastAPI 后端 + React/Vite 前端 + OpenCV 视觉引擎 + PostgreSQL 数据持久化 + HaaS506-HD3 设备网关（4G 遥测/远程控制）。
+**Architecture:** FastAPI 后端 + React/Vite 前端 + OasysCoreCV 视觉引擎 + PostgreSQL 数据持久化 + HaaS506-HD3 设备网关（4G 遥测/远程控制）。
 
-**Tech Stack:** Python 3.11, FastAPI, SQLAlchemy 2.0 async, OpenCV, PostgreSQL, React 18, Vite, TailwindCSS, Zustand, Canvas API
+**Tech Stack:** Python 3.11, FastAPI, SQLAlchemy 2.0 async, OasysCoreCV, PostgreSQL, React 18, Vite, TailwindCSS, Zustand, Canvas API
 
 **Hardware:** 龙仕显微镜摄像头（UVC USB 协议）+ HaaS506-HD3（4G RTU 网关）
 
@@ -24,7 +24,7 @@
 │              后端 (FastAPI)                           │
 │  ┌──────────┬──────────┬──────────┬───────────────┐  │
 │  │  Auth    │ Inspection│ Measur.  │  Device GW    │  │
-│  │  JWT     │ OpenCV    │ 尺寸计算  │  HaaS506 遥测  │  │
+│  │  JWT     │ OasysCoreCV    │ 尺寸计算  │  HaaS506 遥测  │  │
 │  │  账号组   │ 模板比对  │ 公差判定  │  4G 状态上报   │  │
 │  └──────────┴──────────┴──────────┴───────────────┘  │
 │  ┌──────────────────────────────────────────────────┐ │
@@ -117,7 +117,7 @@ class Settings(BaseSettings):
     JWT_SECRET_KEY: str = "change-me-in-production"
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     UPLOAD_DIR: str = "./uploads"
-    CAMERA_INDEX: int = 0  # OpenCV 摄像头索引
+    CAMERA_INDEX: int = 0  # OasysCoreCV 摄像头索引
 
     class Config:
         env_file = ".env"
@@ -230,7 +230,7 @@ Expected: `docker compose ps` shows postgres healthy
 
 ### Phase 3: 相机与视频流
 
-#### Task 3.1: OpenCV 相机封装
+#### Task 3.1: OasysCoreCV 相机封装
 
 #### Task 3.2: WebSocket 视频流推送
 
@@ -252,7 +252,7 @@ Expected: `docker compose ps` shows postgres healthy
 
 #### Task 5.1: InspectionRule 模型 + CRUD
 
-#### Task 5.2: OpenCV 模板比对引擎
+#### Task 5.2: OasysCoreCV 模板比对引擎
 
 #### Task 5.3: 多 ROI 分区检测
 
